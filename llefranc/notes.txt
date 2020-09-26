@@ -53,3 +53,37 @@ sortie (>>)	Exécute la commande A et redirige sa sortie standard à la fin de f
 
 A < fichier
 entrée (<)	Exécute la commande A en lui passant le contenu de fichier dans son entrée standard (stdin)
+
+--------------------------------------- PIPE ---------------------------------------
+#understanding pipe + fork
+https://www.geeksforgeeks.org/c-program-demonstrate-fork-and-pipe/#:~:text=pipe()%20is%20used%20for,up%2C%20one%20for%20each%20direction. 
+
+# tuto pour ecrire un shell
+https://brennan.io/2015/01/16/write-a-shell-in-c/
+
+# comportement chelou du pipe
+https://unix.stackexchange.com/questions/451341/why-does-cd-have-no-effect-if-output-is-piped
+
+# comprendre les inputs et outputs des pipes
+https://superuser.com/questions/178796/understanding-how-inputs-are-sent-to-pipes-in-bash/178798#178798
+
+# inputs / outputs
+https://www.tutorialspoint.com/unix/unix-io-redirections.htm
+
+# code pour realiser une redirection
+http://www.cs.loyola.edu/~jglenn/702/S2005/Examples/dup2.html
+
+# pourquoi utiliser fork et dup2
+https://stackoverflow.com/questions/11515399/implementing-shell-in-c-and-need-help-handling-input-output-redirection
+
+# explique bien les pipes
+https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html
+
+# pourquoi on peut pas pipe dans cd
+https://askubuntu.com/questions/404141/why-cant-i-pipe-into-cd
+
+# multiple pipes
+https://stackoverflow.com/questions/8389033/implementation-of-multiple-pipes-in-c
+
+# comprendre les variables d'environnement
+http://supertos.free.fr/supertos.php?page=950
