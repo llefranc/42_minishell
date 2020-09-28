@@ -1,0 +1,13 @@
+total 504
+drwxr-xr-x  12 llefranc  2019_paris     408 Sep 28 10:33 .
+drwxr-xr-x   5 llefranc  2019_paris     170 Sep 26 11:20 ..
+-rwxr-xr-x   1 llefranc  2019_paris   74092 Sep 28 09:57 a.out
+drwxr-xr-x   3 llefranc  2019_paris     102 Sep 28 09:46 builtins
+drwxr-xr-x   4 llefranc  2019_paris     136 Sep 26 14:06 includes
+-rw-r--r--   1 llefranc  2019_paris  160104 Sep 26 14:04 libftprintf.a
+-rw-r--r--   1 llefranc  2019_paris    1439 Sep 28 10:08 main.c
+-rw-r--r--   1 llefranc  2019_paris    5035 Sep 26 17:20 notes.txt
+drwxr-xr-x   6 llefranc  2019_paris     204 Sep 26 17:05 test
+-rw-r--r--   1 llefranc  2019_paris       0 Sep 28 10:32 test.fsfds
+-rw-r--r--   1 llefranc  2019_paris      83 Sep 28 10:33 test1
+-rw-r--r--   1 llefranc  2019_paris       0 Sep 28 10:33 test2

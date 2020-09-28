@@ -7,6 +7,6 @@
 
 # include "libftprintf.h"
 
-
+int		builtin_echo(char **args);
 
 #endif

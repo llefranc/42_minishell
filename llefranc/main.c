@@ -1,13 +1,13 @@
 #include "includes/minishell.h"
 
-int		find_builtin(char **av, int *ret_func)
+int		find_builtin(char **av, char **env, int *ret_func)
 {
 	int ret;
 	
 	ret = 1;
 	if (!av)
 		return (ret);
-	!ft_strcmp("echo", av[0]) ? ret = 0 && (*ret_func = ft_printf("builtin echo\n")) : 0; //if av[1] match one builtin, put ret value to 0 and launch the appropriate builtin
+	!ft_strcmp("echo", av[0]) ? ret = 0 && (*ret_func = builtin_echo(av)) : 0; //if av[1] match one builtin, put ret value to 0 and launch the appropriate builtin
 	// !ft_strcmp("cd", av[1]) ? ret = 0 && ft_printf("salut\n") : 0;
 	// !ft_strcmp("pwd", av[1]) ? ret = 0 && ft_printf("salut\n") : 0;
 	// !ft_strcmp("export", av[1]) ? ret = 0 && ft_printf("salut\n") : 0;
