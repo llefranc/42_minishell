@@ -87,3 +87,31 @@ https://stackoverflow.com/questions/8389033/implementation-of-multiple-pipes-in-
 
 # comprendre les variables d'environnement
 http://supertos.free.fr/supertos.php?page=950
+
+
+--------------------------------------- NOTES DIVERSES ---------------------------------------
+
+head -n 2 > test10 < scores < harry > test11 | sort < scores | head -n 3 > test12
+head -n 2 < harry > test | sort > test2
+sort > test2 | head -n 2 < harry > test
+head -n 2 < harry > test | sort > test2
+
+l'ordre semble etre ';' > pipe > fork > redirection > execution 
+on cree les fichiers des redirections inputs puis on fait les redirections output et emsuiite on exec
+les redirections semblent ecraser les pipes >> elles doivent close les FD (ce qui a pour consequence
+d'ennvoyer EOF dans le pipe)
+
+reste a voir qui est le pere et le fils dans le pipe (gauche ou droite ?)
+
+>>>>>>>>>> open("input", O_RDONLY);
+comment ouvrir un fichier pour les redirections inputs
+
+>>>>>>>>>>> open("output", O_WRONLY | O_TRUNC | O_CREAT);
+comment ouvrir les fichiers et les mettre a zero (ce que font les redirections output)
+
+faire un tableau de structure avec surement un identificateur (1/2/3 etc pour redirection, commande, pipe) 
+et un pointeur void que l'on cast ensuite qui contiendra soit la commande et ses args, soit le fichier a ouvrir etc
+
+>>>>>>> pour les buiiltins on ne va pas fork et execve pour les executer, juste appeler la fonction. par contre 
+bien entendu si on mets un pipe il y a un fork et certains builtins pourront ne plus fonctionner s'ils pas dans
+le processus pere lors de leur execution (ex : cd qui doit se trouver a la fin de la ligne pour etre executer)

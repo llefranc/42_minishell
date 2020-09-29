@@ -1,0 +1,110 @@
+--------------------------------------------------------------
+CORENTIN 
+--------------------------------------------------------------
+
+>>> GNL recupere la ligne de commande qui a été tapée
+
+
+!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!
+
+>>> 1ere partie qui va checker la syntaxe de la ligne de commande (jusqu'au '\n', point-virugle compris)
+
+◦ ${VAR} = $VAR >> rempplacer par la variable
+◦ ;; >> renvoie une erreur
+◦ & ( ) sont des parametres que l'on ne doit pas gerer >> renvoyer une erreur surement
+◦ | ou > tout seul sans rien derriere >> penser a renvoyer une erreur de syntax car ca entraine du multiligne
+◦ ’ et " doivent marcher comme dans bash, à l’exception du multiligne.
+
+
+!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!
+
+>>> 2eme partie qui va decomposer chaque partie séparée par des point-virgules en tokens, que l'on
+	representera en tableau de structure 
+
+>>>	SACHANT QUAVANT LE TAB DE STRUCT DANS CETTE PARTIE IL FAUT RETRAITER LA LIGNE JUSQUAU POINT VIRGULE
+	ET REMPLACER LES VAR D'ENVIRONNEMENTS
+
+
+La structure sera de la forme :
+typedef struct s_cmd {
+	int type;
+	void *token;
+} t_cmd;
+
+>>> EXEMPLE :
+
+echo > output_file < input_file ; echo coucou | cat
+
+struct {										>>>>>>>> COMMANDE
+	type = 2
+	(void *) char **args = {"echo"}
+}
+
+struct {										>>>>>>>> REDIRECTION INPUT
+	type = 0
+	(void *) char *file = input_file
+}
+
+struct {										>>>>>>>> REDIRECTION OUTPUT
+	type = 1
+	(void *) char *file = output_file
+}
+
+----------------------------------------------- >>>>>>>> ';' prochaine instruction, prochain double tableau 
+															 créé dans le prochain tour de boucle
+
+struct {										>>>>>>>> COMMANDE
+	type = 2
+	(void *) char **args = {"echo", "coucou"}
+}
+
+struct {										>>>>>>>> INDIQUE UN PIPE
+	type = 4
+	(void *) *ptr = NULL
+}
+
+struct {										>>>>>>>> COMMANDE
+	type = 2
+	(void *) char **args = {"cat"}
+}
+
+
+
+--------------------------------------------------------------
+LUCAS
+--------------------------------------------------------------
+
+>>> coder les builtins 
+
+◦ echo avec option -n
+◦ cd uniquement avec un chemin absolu ou relatif
+◦ pwd sans aucune option
+◦ export sans aucune option
+◦ unset sans aucune option
+◦ env sans aucune option ni argument
+◦ exit sans aucune option
+
+
+!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!
+
+>>> pipes et redirections (fonction pipe, dup, dup2 et fork)
+
+
+!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!
+
+>>> fork + execve pour executer les programmes
+
+
+!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!
+
+>>> valeur de retour des programmes ($? doit marcher comme dans bash)
+
+
+
+--------------------------------------------------------------
+AUTRES
+--------------------------------------------------------------
+
+>>> ctrl-C, ctrl-D et ctrl-\ doivent afficher le même résultat que dans bash.
+	Correspond aux signaux, a voir quand ils doivent etre mis en place mais je
+	pense dans la partie du parser donc CORENTIN en theorie
