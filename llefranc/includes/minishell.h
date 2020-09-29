@@ -4,6 +4,7 @@
 # include <fcntl.h>
 # include <dirent.h>
 # include <sys/wait.h>
+# include <sys/errno.h>
 
 # include "libftprintf.h"
 

@@ -93,7 +93,7 @@ http://supertos.free.fr/supertos.php?page=950
 
 head -n 2 > test10 < scores < harry > test11 | sort < scores | head -n 3 > test12
 head -n 2 < harry > test | sort > test2
-sort > test2 | head -n 2 < harry > test
+sort > test2 | head -n 2 > harry < test > test3
 head -n 2 < harry > test | sort > test2
 
 l'ordre semble etre ';' > pipe > fork > redirection > execution 
@@ -103,11 +103,14 @@ d'ennvoyer EOF dans le pipe)
 
 reste a voir qui est le pere et le fils dans le pipe (gauche ou droite ?)
 
->>>>>>>>>> open("input", O_RDONLY);
+>>>>>>>>>> open("input", O_RDONLY); <
 comment ouvrir un fichier pour les redirections inputs
 
->>>>>>>>>>> open("output", O_WRONLY | O_TRUNC | O_CREAT);
+>>>>>>>>>>> open("output", O_WRONLY | O_TRUNC | O_CREAT); >
 comment ouvrir les fichiers et les mettre a zero (ce que font les redirections output)
+
+>>>>>>>>>>> open("output", O_WRONLY | O_APPEND | O_CREAT); >>
+
 
 faire un tableau de structure avec surement un identificateur (1/2/3 etc pour redirection, commande, pipe) 
 et un pointeur void que l'on cast ensuite qui contiendra soit la commande et ses args, soit le fichier a ouvrir etc

@@ -10,11 +10,11 @@ CORENTIN
 >>> 1ere partie qui va checker la syntaxe de la ligne de commande (jusqu'au '\n', point-virugle compris)
 
 ◦ ${VAR} = $VAR >> rempplacer par la variable
+◦ valeur de retour des programmes ($? doit marcher comme dans bash) >> equivalent a une variable
 ◦ ;; >> renvoie une erreur
 ◦ & ( ) sont des parametres que l'on ne doit pas gerer >> renvoyer une erreur surement
 ◦ | ou > tout seul sans rien derriere >> penser a renvoyer une erreur de syntax car ca entraine du multiligne
 ◦ ’ et " doivent marcher comme dans bash, à l’exception du multiligne.
-
 
 !_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!
 
@@ -33,16 +33,11 @@ typedef struct s_cmd {
 
 >>> EXEMPLE :
 
-echo > output_file < input_file ; echo coucou | cat
+echo > output_file < input_file >> output_file_append ; echo coucou | cat
 
 struct {										>>>>>>>> COMMANDE
-	type = 2
+	type = 3
 	(void *) char **args = {"echo"}
-}
-
-struct {										>>>>>>>> REDIRECTION INPUT
-	type = 0
-	(void *) char *file = input_file
 }
 
 struct {										>>>>>>>> REDIRECTION OUTPUT
@@ -50,11 +45,21 @@ struct {										>>>>>>>> REDIRECTION OUTPUT
 	(void *) char *file = output_file
 }
 
+struct {										>>>>>>>> REDIRECTION INPUT
+	type = 0
+	(void *) char *file = input_file
+}
+
+struct {										>>>>>>>> REDIRECTION OUTPUT APPEND
+	type = 2
+	(void *) char *file = output_file_append
+}
+
 ----------------------------------------------- >>>>>>>> ';' prochaine instruction, prochain double tableau 
 															 créé dans le prochain tour de boucle
 
 struct {										>>>>>>>> COMMANDE
-	type = 2
+	type = 3
 	(void *) char **args = {"echo", "coucou"}
 }
 
@@ -64,7 +69,7 @@ struct {										>>>>>>>> INDIQUE UN PIPE
 }
 
 struct {										>>>>>>>> COMMANDE
-	type = 2
+	type = 3
 	(void *) char **args = {"cat"}
 }
 
