@@ -9,13 +9,21 @@ CORENTIN
 
 >>> 1ere partie qui va checker la syntaxe de la ligne de commande (jusqu'au '\n', point-virugle compris)
 
-◦ ${VAR} = $VAR >> rempplacer par la variable
-◦ valeur de retour des programmes ($? doit marcher comme dans bash) >> equivalent a une variable
 ◦ ;; >> renvoie une erreur
 ◦ & ( ) sont des parametres que l'on ne doit pas gerer >> renvoyer une erreur surement
 ◦ | ou > tout seul sans rien derriere >> penser a renvoyer une erreur de syntax car ca entraine du multiligne
 ◦ ’ et " doivent marcher comme dans bash, à l’exception du multiligne.
 
+EXCEPTIONS A GERER:
+◦ bash-3.2$ ls=ls ls=ls=ls ls ls=ls
+  ls: ls=ls: No such file or directory
+  bash-3.2$ ls=ls ls=ls=ls ls
+  >> si la variable n'existe pas et qu'elle est avant une fonction (ex : echo) alors aucun resulat. si elle existe
+  deja par contre il faut actualiser la valeur de la variable. ls==10 donnera >> ls="=10"
+
+◦ avec export toto (sans mettre toto=quelquechose), le token contenant la variable indefinie devient invalide
+  bash-3.2$ echo $test1sjj k
+k
 !_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!
 
 >>> 2eme partie qui va decomposer chaque partie séparée par des point-virgules en tokens, que l'on
@@ -23,7 +31,10 @@ CORENTIN
 
 >>>	SACHANT QUAVANT LE TAB DE STRUCT DANS CETTE PARTIE IL FAUT RETRAITER LA LIGNE JUSQUAU POINT VIRGULE
 	ET REMPLACER LES VAR D'ENVIRONNEMENTS
+◦ ${VAR} = $VAR >> rempplacer par la variable
+◦ valeur de retour des programmes ($? doit marcher comme dans bash) >> equivalent a une variable
 
+>>> le premier token (la commande ou l'executable) semble ne pas tenir compte de la casse. ECHO <=> echo, ./A.OUT <=> ./a.out
 
 La structure sera de la forme :
 typedef struct s_cmd {
@@ -33,11 +44,11 @@ typedef struct s_cmd {
 
 >>> EXEMPLE :
 
-echo > output_file < input_file >> output_file_append ; echo coucou | cat
+echo -n > output_file < input_file >> output_file_append ; echo coucou | cat
 
 struct {										>>>>>>>> COMMANDE
 	type = 3
-	(void *) char **args = {"echo"}
+	(void *) char **args = {"echo", "-n"}
 }
 
 struct {										>>>>>>>> REDIRECTION OUTPUT

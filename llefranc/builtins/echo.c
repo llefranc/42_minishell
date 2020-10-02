@@ -1,18 +1,5 @@
 #include "../includes/minishell.h"
 
-//echo >>> output
-//cd
-//pwd >>> output
-//export
-//unset
-//env >> output
-//exit
-
-//fonction qui remet les commandes en minuscule
-//echo -nnnnnn -n -n -n 
-//export sans rien affiche env trié
-//bash: export: `?=0': not a valid identifier
-
 /*
 ** Check if echo command is followed by one or more "-n" option.
 ** "-n -nnnnn -n -nn" is valid for exemple.
@@ -36,8 +23,8 @@ char	**echo_n_opt(char **args, int *n_opt)
 }
 
 /*
-** Print the args on stdoud, separated by one space, and end the line by '\n'.
-** If "-n" option is presend, doesn't print the last '\n'. 
+** Prints the args on stdoud, separated by one space, and end the line by '\n'.
+** If "-n" option is present, doesn't print the last '\n'. 
 */
 int		builtin_echo(char **args)
 {
@@ -49,16 +36,16 @@ int		builtin_echo(char **args)
 	args++; //args[0] == "echo" str
 	if (!(*args))
 	{
-		ft_putchar_fd('\n', 1);
+		ft_printf("\n");
 		return (0);
 	}
 	args = echo_n_opt(args, &n_opt); //looking for n_opt
 	while(args[i]) //printing each arg separated by a space
 	{
-		ft_putstr_fd(args[i++], 1);
-		args[i] ? ft_putchar_fd(' ', 1) : 0;
+		ft_printf("%s", args[i++]);
+		args[i] ? ft_printf(" ") : 0;
 	}
 	if (!n_opt) //if no option -n, we print a '\n'
-		ft_putchar_fd('\n', 1);
+		ft_printf("\n");
 	return (0);
 }
