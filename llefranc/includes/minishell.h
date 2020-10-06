@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/06 17:46:17 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/06 18:07:50 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ char	**copy_env(char **env, int add_quotes_bool);
 int		builtin_echo(char **args);
 int		builtin_env(char **args, char **env);
 int		builtin_export(char **args, char ***env);
+int     builtin_unset(char **args, char ***env);
 
 
 #endif

@@ -14,7 +14,11 @@ CORENTIN
 ◦ | ou > tout seul sans rien derriere >> penser a renvoyer une erreur de syntax car ca entraine du multiligne
 ◦ ’ et " doivent marcher comme dans bash, à l’exception du multiligne. >> 1 ne doit pas etre toout seul
 
+
+------------------------------------------------------------------------
 EXCEPTIONS A GERER:
+------------------------------------------------------------------------
+
 ◦ bash-3.2$ ls=ls ls=ls=ls ls ls=ls
   ls: ls=ls: No such file or directory
   bash-3.2$ ls=ls ls=ls=ls ls
@@ -25,8 +29,18 @@ EXCEPTIONS A GERER:
   bash-3.2$ echo $totosjj k >>toto vaut surement '\0' du coup >> EN FAIT IL TROUVE PAS LA VARIABLE
 k
 
+>>>>>>> les accolades marchent >> pas besoin de les gere ?
 bash-3.2$ echo ${tata}salut
 1salut
+
+
+bash-3.2$ echo '\"salut$titi'
+\"salut$titi
+bash-3.2$ echo \"salut$titi
+"salut2
+bash-3.2$ echo "\"salut$titi"
+"salut2
+
 !_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!!_!
 
 >>> 2eme partie qui va decomposer chaque partie séparée par des point-virgules en tokens, que l'on

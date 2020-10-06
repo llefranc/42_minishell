@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/06 13:53:29 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/06 18:07:37 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int		find_builtin(char **args, char ***env, int *ret_func)
 	// !ft_strcmp("cd", args[0]) && (ret = 1) ? ft_printf("salut\n") : 0;
 	// !ft_strcmp("pwd", args[0]) && (ret = 1) ? ft_printf("salut\n") : 0;
 	!ft_strcmp("export", args[0]) && (ret = 1) ? *ret_func = builtin_export(args, env) : 0;
-	// !ft_strcmp("unset", args[0]) && (ret = 1) ? ft_printf("salut\n") : 0;
+	!ft_strcmp("unset", args[0]) && (ret = 1) ? *ret_func = builtin_unset(args, env) : 0;
 	!ft_strcmp("env", args[0]) && (ret = 1) ? *ret_func = builtin_env(args, *env) : 0;
 	// !ft_strcmp("exit", args[0]) && (ret = 1) ? ft_printf("salut\n") : 0;
 	//echo int cd int pwd
