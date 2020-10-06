@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
+/*   Updated: 2020/10/06 17:46:17 by llefranc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -9,9 +21,11 @@
 # include "libftprintf.h"
 
 //--------------------- UTILS ---------------------
-char	*add_quotes(char *var);
+// int     ft_strncmp(char *s1, char *s2, unsigned int n);
+int		error_msg(char *msg, int return_value);
 
 
+int     new_variable(char *var, char **env);
 char	**copy_env(char **env, int add_quotes_bool);
 
 

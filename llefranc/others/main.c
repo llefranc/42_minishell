@@ -1,4 +1,16 @@
-#include "includes/minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
+/*   Updated: 2020/10/06 13:53:29 by llefranc         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/minishell.h"
 
 //echo >>> output
 //cd
@@ -8,39 +20,6 @@
 //env >> output
 //exit
 
-/*
-** Copies all the environnement variable in a **char to manipulate them after
-** in our shell (so we can set new variables / unset some variables).
-*/
-char	**copy_env(char **env, int add_quotes_bool)
-{
-	char	**tmp;
-	int		i;
-
-// (void)add_quotes_bool;
-	i = 0;
-	while (env[i]) //number of environnement variable
-		i++;
-	if (!(tmp = malloc(sizeof(*tmp) * (i + 1))))
-		return (NULL);
-	tmp[i] = NULL;
-	i = -1;
-	while (env[++i])
-	{
-		if (add_quotes_bool)
-			tmp[i] = add_quotes(env[i]);
-		else
-		{
-			if (!(tmp[i] = malloc(ft_strlen(env[i]) + 1)))
-			{
-				free_split(tmp); //if malloc failed, we free all tmp[i] previously allocated + tmp
-				return (NULL);
-			}
-			ft_strlcpy(tmp[i], env[i], ft_strlen(env[i]) + 1); //copying env[i] in tmp[i]
-		}
-	}
-	return (tmp);
-}
 
 int		find_builtin(char **args, char ***env, int *ret_func)
 {
