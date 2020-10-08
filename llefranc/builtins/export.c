@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 13:04:17 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/08 14:48:52 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,10 @@ char    *add_new_variable(char *var)
     char    *new_var;
     
     i = 0;
-    while (var[i] != '\0' && var[i] != '=')
+    while (var[i] != '\0' && var[i] != '=' && !(var[i] == '+' && var[i + 1] == '='))
         i++;
+	if (var[i] == '+')	//if it's 'toto+=2', we erase the '+' to have 'toto=2'
+		ft_strlcpy(var + i, var + i + 1, ft_strlen(var + i + 1) + 1);
     if (var[i] == '=')  //if the variable contains an equal, we add quotes
     {
         if (!(new_var = add_quotes(var)))
@@ -151,9 +153,23 @@ int     create_new_env_tab(char ***env, int number_new_vars)
 }
 
 /*
+** Returns the lenght of the variable's name (the part before the '=' / '+=').
+*/
+int		len_var_name(char *var)
+{
+	int		i;
+
+	i = 0;
+	while (var[i] && var[i] != '=' && !(var[i] == '+' && var[i + 1] == '='))
+		i++;
+	return (i);
+}
+
+
+/*
 ** Returns 1 if *var doesn't exist in the environnement, 0 otherwise.
 */
-int     new_variable(char *var, char **env)
+int     is_it_new_variable(char *var, char **env)
 {
     int     i;
     int     var_len; //size of the variable before '=' sign (ex toto=ta >> var_len = 4)
@@ -162,7 +178,8 @@ int     new_variable(char *var, char **env)
     var_len = 0;
     while(var[var_len] && var[var_len] != '=' && var[var_len] != '+')
         var_len++;
-    while (env[i] && ft_strncmp(var, env[i], var_len)) //until we match an existing variable
+    while (env[i] && (ft_strncmp(var, env[i], var_len) || 
+			len_var_name(var) != len_var_name(env[i]))) //until we match an existing variable
         i++;
     if (!(env[i])) //if we reached end of env tab, the variable doesn't exist
         return (1);
@@ -258,16 +275,16 @@ int     update_variable(char *var, char **env)
 
 /*
 ** Returns 0 if the variable's name is correct, 1 otherwise (first charac must be alpha,
-** all the others ones until '\0' or '=' or '+=' must be alphanum).
+** all the others ones until '\0' or '=' or '+=' must be alphanum. '_' is authorized).
 */
 int		check_name_var(char *var)
 {
 	int		i;
 	
-	if (!ft_isalpha(var[0]))
+	if (!(ft_isalpha(var[0]) || var[0] == '_'))
 		return (1);
 	i = 0;
-	while (var[i] && var[i] != '=' && var[i] != '+' && ft_isalnum(var[i]))
+	while (var[i] && var[i] != '=' && var[i] != '+' && (ft_isalnum(var[i]) || var[i] == '_'))
 		i++;
 	if (var[i] == '\0' || var[i] == '=' || (var[i] == '+' && var[i + 1] == '='))
 		return (0);
@@ -301,7 +318,7 @@ int     builtin_export(char **args, char ***env)
 			ret_value = 1;
 			ft_printf("bash: export: `%s': not a valid identifier\n", args[i]);
 		}
-        else if (new_variable(args[i], *env)) //if the variable doesn't exist in the environnement
+        else if (is_it_new_variable(args[i], *env)) //if the variable doesn't exist in the environnement
         {
             if (create_new_env_tab(env, 1)) //add one *char to the end of env tab for new var
                 return (error_msg("bash: export: malloc failed\n", 1));

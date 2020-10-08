@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/06 18:07:37 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/08 14:29:36 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int		find_builtin(char **args, char ***env, int *ret_func)
 	// !ft_strcmp("exit", args[0]) && (ret = 1) ? ft_printf("salut\n") : 0;
 	//echo int cd int pwd
 	// ft_printf("---------\n", ret);
+	// system("leaks a.out");
 	return (ret);
 }
 
