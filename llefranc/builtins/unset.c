@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 17:42:10 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 14:48:54 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/08 15:28:44 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int     builtin_unset(char **args, char ***env)
     if (args && !args[1]) //if no arguments and only unset cmd >> nothing
         return (0);
     if (args[1][0] == '-') //our unset doesn't handle options
-        return (error_msg("bash: unset: no options are allowed\n", 1));
+        return (error_msg("minishell: unset: no options are allowed\n", 1));
 	i = 0;
 	ret_value = 0;
     while (args[++i]) //first i is 1, cause args[0] is unset cmd
@@ -82,12 +82,12 @@ int     builtin_unset(char **args, char ***env)
 		if (check_name_var_unset(args[i]))	//if name of variable isn't correct >> we don't unset
 		{									// and we set return value to error code (1)
 			ret_value = 1;
-			ft_printf("bash: unset: `%s': not a valid identifier\n", args[i]);
+			ft_printf("minishell: unset: `%s': not a valid identifier\n", args[i]);
 		}
         else if (!is_it_new_variable(args[i], *env))	//if the variable exist in the environnement
         {												//and there is no '=' inside
             if (reduce_env_tab(env, args[i]))
-                return (error_msg("bash: unset: malloc failed\n", 1));
+                return (error_msg("minishell: unset: malloc failed\n", 1));
         }
     }
     return (ret_value);

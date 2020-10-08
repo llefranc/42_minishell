@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 14:50:39 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/08 15:28:17 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,28 +309,28 @@ int     builtin_export(char **args, char ***env)
         return (0);
     }
     if (args[1][0] == '-') //our export doesn't handle options
-        return (error_msg("bash: export: no options are allowed\n", 1));
+        return (error_msg("minishell: export: no options are allowed\n", 1));
     i = 0;
     while (args[++i]) //first i is 1, cause args[0] is export cmd
     {
 		if (check_name_var(args[i]))	//if name of variable isn't correct >> we don't export
 		{								// and we set return value to error code (1)
 			ret_value = 1;
-			ft_printf("bash: export: `%s': not a valid identifier\n", args[i]);
+			ft_printf("minishell: export: `%s': not a valid identifier\n", args[i]);
 		}
         else if (is_it_new_variable(args[i], *env)) //if the variable doesn't exist in the environnement
         {
             if (create_new_env_tab(env, 1)) //add one *char to the end of env tab for new var
-                return (error_msg("bash: export: malloc failed\n", 1));
+                return (error_msg("minishell: export: malloc failed\n", 1));
             j = 0;
             while ((*env)[j]) //going to the end of the actual env tab
                 j++;
             if (!((*env)[j] = add_new_variable(args[i])))
-                return (error_msg("bash: export: malloc failed\n", 1));
+                return (error_msg("minishell: export: malloc failed\n", 1));
         }
         else        //args[i] already exist in the environnement, so we just update the value
             if (update_variable(args[i], *env))
-                return (error_msg("bash: export: malloc failed\n", 1));
+                return (error_msg("minishell: export: malloc failed\n", 1));
     }
     return (ret_value);
 }
