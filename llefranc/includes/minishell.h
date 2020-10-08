@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 15:29:39 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/08 15:35:21 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,7 @@ int		builtin_export(char **args, char ***env);
 int     builtin_unset(char **args, char ***env);
 
 int		builtin_pwd(char **args);
+
+int		builtin_cd(char **args, char **env);
 
 #endif
