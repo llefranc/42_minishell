@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/06 18:07:05 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/08 13:04:17 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ int     new_variable(char *var, char **env)
 
     i = 0;
     var_len = 0;
-    while(var[var_len] && var[var_len] != '=')
+    while(var[var_len] && var[var_len] != '=' && var[var_len] != '+')
         var_len++;
     while (env[i] && ft_strncmp(var, env[i], var_len)) //until we match an existing variable
         i++;
@@ -170,7 +170,63 @@ int     new_variable(char *var, char **env)
 }
 
 /*
-** Frees the previous variable and adds the new one.
+** Adds ="" after the variable if it doesn't already have =.
+*/
+int		add_equal_and_quotes(char **env, int i)
+{
+	int		j;
+	int		len;
+	char	*tmp;
+
+	j = 0;
+	len = ft_strlen(env[i]);
+	while (env[i][j] && env[i][j] != '=')
+		j++;
+	if (env[i][j] == '=') //no need to change anything
+		return (0);
+	if (!(tmp = malloc(len + 4))) //+3 for ="" and +1 for '\0'
+		return (1);
+	tmp[len + 3] = '\0';
+	ft_strlcpy(tmp, env[i], len + 1);
+	tmp[len] = '=';
+	tmp[len + 1] = '"';
+	tmp[len + 2] = '"';
+	free(env[i]);
+	env[i] = tmp;
+	return (0);
+}
+
+/*
+** Joins the previous value and the new in the case of '+='.
+*/
+int		concatenate_values(char *var, char **env, int i)
+{
+	int		j;
+	int		size_new_var;
+	int		size_prev_var;
+	char	*tmp;
+
+	j = 0;
+	while (var[j] && var[j] != '=')
+		j++;
+	size_new_var = (int)ft_strlen(&var[j + 1]);
+	if (add_equal_and_quotes(env, i)) //adding ="" if that's not already the case
+		return (1);
+	size_prev_var = (int)ft_strlen(env[i]);
+	if (!(tmp = malloc(size_new_var + size_prev_var + 1)))
+		return (1);
+	ft_strlcpy(tmp, env[i], size_prev_var); //copying previous var except last "
+	ft_strlcpy(tmp + size_prev_var - 1, &var[j + 1], size_new_var + 1); //copying new var's value (after =)
+	tmp[size_prev_var + size_new_var - 1] = '"';
+	tmp[size_prev_var + size_new_var] = '\0';
+	free(env[i]);
+	env[i] = tmp;
+	return (0);
+}
+
+/*
+** Frees the previous variable and adds the new one if there is '='.
+** Join previous value and new one if there is '+='.
 */
 int     update_variable(char *var, char **env)
 {
@@ -180,24 +236,29 @@ int     update_variable(char *var, char **env)
 
     i = 0;
     var_len = 0;
-    while(var[var_len] && var[var_len] != '=')
+    while(var[var_len] && var[var_len] != '=' && var[var_len] != '+')
         var_len++;
     if (var[var_len] == '\0') //if just toto without '=', no need to update
         return (0);
     while (env[i] && ft_strncmp(var, env[i], var_len)) //until we match an existing variable
         i++;
-    free(env[i]); //freeing previous variable
-    if (!(tmp = ft_strdup(var)))
-        return (1);
-    if (!(env[i] = add_quotes(tmp)))
-        return (1);
-    free(tmp);
+	if (var[var_len] == '=') //if we just need to change the value
+	{
+		free(env[i]); //freeing previous variable
+		if (!(tmp = ft_strdup(var)))
+			return (1);
+		if (!(env[i] = add_quotes(tmp)))
+			return (1);
+		free(tmp);
+	}
+	else if (concatenate_values(var, env, i)) //in the case of '+='
+		return (1);
     return (0);
 }
 
 /*
-** Checks if the variable's name is correct (first charac must be alpha,
-** all the others ones until '\0' or '=' must be alphanum).
+** Returns 0 if the variable's name is correct, 1 otherwise (first charac must be alpha,
+** all the others ones until '\0' or '=' or '+=' must be alphanum).
 */
 int		check_name_var(char *var)
 {
@@ -206,9 +267,9 @@ int		check_name_var(char *var)
 	if (!ft_isalpha(var[0]))
 		return (1);
 	i = 0;
-	while (var[i] && var[i] != '=' && ft_isalnum(var[i]))
+	while (var[i] && var[i] != '=' && var[i] != '+' && ft_isalnum(var[i]))
 		i++;
-	if (var[i] == '\0' || var[i] == '=')
+	if (var[i] == '\0' || var[i] == '=' || (var[i] == '+' && var[i + 1] == '='))
 		return (0);
 	return (1);
 }
