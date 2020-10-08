@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 14:50:00 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/08 14:50:39 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,7 +289,6 @@ int		check_name_var(char *var)
 	if (var[i] == '\0' || var[i] == '=' || (var[i] == '+' && var[i + 1] == '='))
 		return (0);
 	return (1);
-	(void);
 }
 
 /*
