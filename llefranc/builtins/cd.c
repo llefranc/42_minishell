@@ -6,22 +6,24 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 17:02:47 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/09 10:42:18 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-//checker si c'est un directory et s'il existe bien
-//cd sans rien utilise la varible HOME pour revenir a ce dossier
-//penser aussi a gerer le tilde <> HOME >> si elle est unset on ne peut plus faire cd sans arguments
+//>> cd sans rien utilise la varible HOME pour revenir a ce dossier
+//>> penser aussi a gerer le tilde <> HOME >> si elle est unset on ne peut plus faire cd sans arguments
+
 //variable OLDPWD >> dernier pwd connu avant de changer
+
+//checker si c'est un directory et s'il existe bien
 //mettre a jour la variable PWD >> si elle est unset, cd marche encore et ne s'en occupe plus
 //gerer le ./..
 
 //quand cd est appelé il met a jour les valeurs de PWD et OLDPWD si celles ci existent
 
-//gerer chemin relatif et chemin absolu
+//gerer chemin relatif et chemin absolu >> commence par un / ou non
 //gerer le cas ou le cd est a la fin d'un pipe 
 
 // bash-3.2$ cd s
@@ -77,7 +79,7 @@ int		builtin_cd(char **args, char **env)
 		return (error_msg("minishell: cd: getcwd failed\n", 1));
 	}
 	
-	REPRENDRE ICI
+	
 	ft_printf("path = |%s|, oldpwd = |%s|\n", path, oldpwd);
 	free(path);
 	free(oldpwd);

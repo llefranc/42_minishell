@@ -6,11 +6,13 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 15:35:51 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/09 11:58:08 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+char	**copy_env(char **env, int add_quotes_bool);
 
 //echo >>> output
 //cd
@@ -20,6 +22,7 @@
 //env >> output
 //exit
 
+//penser a mettre en variable globale le retour des fonctions et le ptr qui tient
 
 int		find_builtin(char **args, char ***env, int *ret_func)
 {
@@ -51,7 +54,7 @@ int main(int ac, char *av[], char *env[])
 	char **env_shell;
 
 	(void)av;
-	if (!(env_shell = copy_env(env, 1)))
+	if (!(env_shell = copy_env(env, 0)))
 		return (1);
 	if (ac != 1)
 	{

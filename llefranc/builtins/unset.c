@@ -6,16 +6,20 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 17:42:10 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 15:28:44 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/09 11:57:57 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+int		len_var_name(char *var);						//export.c
+int     is_it_new_variable(char *var, char **env);		//export.c
+char	**copy_env(char **env, int add_quotes_bool);	//export.c
+
 /*
-** Reallocates a tab of *char (previous variables - the one to unset).
+** Reallocates a array of *char (previous variables - the one to unset).
 */
-int     reduce_env_tab(char ***env, char *old_var)
+int     reduce_env_array(char ***env, char *old_var)
 {
     char    **tmp_env;
     int     i;
@@ -24,33 +28,33 @@ int     reduce_env_tab(char ***env, char *old_var)
     i = 0;
     while ((*env)[i])
         i++;
-    if (!(tmp_env = malloc(sizeof(*env) * i))) //duplicating env tab minus one variable
+    if (!(tmp_env = malloc(sizeof(*env) * i))) //duplicating env array minus one variable
         return (1);
     tmp_env[i - 1] = NULL;
     i = 0;
     j = 0;
     while ((*env)[i] && ((ft_strncmp((*env)[i], old_var, (int)ft_strlen(old_var)))	//until we met old_var
-			|| len_var_name(old_var) != len_var_name((*env)[i])))					//in environnement tab
+			|| len_var_name(old_var) != len_var_name((*env)[i])))					//in environnement array
     {
-        tmp_env[j] = (*env)[i]; //copying adresses of previous tab in new one
+        tmp_env[j] = (*env)[i]; //copying adresses of previous array in new one
         i++;
         j++;
     }
     free((*env)[i++]); //var that needs to be unset
     while ((*env)[i])
     {
-        tmp_env[j] = (*env)[i]; //copying adresses of previous tab in new one
+        tmp_env[j] = (*env)[i]; //copying adresses of previous array in new one
         i++;
         j++;
     }
-    free(*env); //freeing previous tab of *char
+    free(*env); //freeing previous array of *char
     *env = tmp_env;
     return (0);
 }
 
 /*
 ** Checks if the variable's name is correct (first charac must be alpha,
-** all the others ones until '\0' must be alphanum.  '_' is authorized).
+** all the others ones until null-terminated must be alphanum.  '_' is authorized).
 */
 int		check_name_var_unset(char *var)
 {
@@ -86,7 +90,7 @@ int     builtin_unset(char **args, char ***env)
 		}
         else if (!is_it_new_variable(args[i], *env))	//if the variable exist in the environnement
         {												//and there is no '=' inside
-            if (reduce_env_tab(env, args[i]))
+            if (reduce_env_array(env, args[i]))
                 return (error_msg("minishell: unset: malloc failed\n", 1));
         }
     }

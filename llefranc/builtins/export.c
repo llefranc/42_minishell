@@ -6,14 +6,14 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 15:28:17 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/09 11:57:40 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 /*
-** Sorts the tmp_env tab and prints it on stdout. Then free the tmp_env.
+** Sorts the tmp_env array and prints it on stdout. Then free the tmp_env.
 */
 void    print_sort_env(char **tmp_env)
 {
@@ -50,12 +50,18 @@ char    *add_quotes(char *var)
     int     begin;
 
     begin = 0;
+    while (var[begin] && var[begin] != '=')
+        begin++;
+	if (var[begin] == '\0') //no need to add quotes if no '='
+	{
+		if (!(var_quoted = ft_strdup(var)))
+			return (NULL);
+		return (var_quoted);
+	}
     size = ft_strlen(var) + 2; //for quotes
     if (!(var_quoted = malloc(size + 1))) //+1 for '\0'
         return (NULL);
     var_quoted[size] = '\0';
-    while (var[begin] != '=')
-        begin++;
     begin++;
     ft_strlcpy(var_quoted, var, begin + 1); //copying firsrt part until '='
     var_quoted[begin] = '\"';
@@ -78,18 +84,18 @@ char    **copy_env(char **env, int add_quotes_bool)
     i = 0;
     while (env[i]) //number of environnement variable
         i++;
-    if (!(tmp = malloc(sizeof(*tmp) * (i + 1)))) //+1 because env tab is NULL terminated
+    if (!(tmp = malloc(sizeof(*tmp) * (i + 1)))) //+1 because env array is NULL terminated
         return (NULL);
     tmp[i] = NULL;
     i = -1;
     while (env[++i])
     {
-        if (add_quotes_bool) //adds quotes for each var of env tab
+        if (add_quotes_bool) //adds quotes for each var of env array
         {
             if (!(tmp[i] = add_quotes(env[i])))
                 return (NULL);
         }
-        else                //otherwise just duplicates env tab
+        else                //otherwise just duplicates env array
         {
             if (!(tmp[i] = malloc(ft_strlen(env[i]) + 1)))
             {
@@ -103,8 +109,8 @@ char    **copy_env(char **env, int add_quotes_bool)
 }
 
 /*
-** Duplicates and return a new environnement variable. Add quotes if there is
-** an equal in the string.
+** Duplicates and returns a new environnement variable. Add quotes if there is
+** '=' in the string.
 */
 char    *add_new_variable(char *var)
 {
@@ -116,21 +122,15 @@ char    *add_new_variable(char *var)
         i++;
 	if (var[i] == '+')	//if it's 'toto+=2', we erase the '+' to have 'toto=2'
 		ft_strlcpy(var + i, var + i + 1, ft_strlen(var + i + 1) + 1);
-    if (var[i] == '=')  //if the variable contains an equal, we add quotes
-    {
-        if (!(new_var = add_quotes(var)))
-            return (NULL);
-    }
-    else                //otherwise we just duplicate the new var
-        if (!(new_var = ft_strdup(var)))
-            return (NULL);
+	if (!(new_var = ft_strdup(var))) //we duplicate the new var
+		return (NULL);
     return (new_var);
 }       
 
 /*
-** Reallocates a tab of *char (previous variables + new ones from export).
+** Reallocates an array of *char (previous variables + new ones from export).
 */
-int     create_new_env_tab(char ***env, int number_new_vars)
+int     create_new_env_array(char ***env, int number_new_vars)
 {
     char    **tmp_env;
     int     i;
@@ -139,15 +139,15 @@ int     create_new_env_tab(char ***env, int number_new_vars)
     i = 0;
     while ((*env)[i])
         i++;
-    size = i + number_new_vars; //future size of env tab
+    size = i + number_new_vars; //future size of env array
     if (!(tmp_env = malloc(sizeof(*env) * (size + 1))))
         return (1);
     i = -1;
     while ((*env)[++i])
-        tmp_env[i] = (*env)[i]; //copying adresses of previous tab in new one
+        tmp_env[i] = (*env)[i]; //copying adresses of previous array in new one
     while (i < size + 1)        //putting to NULL new ptr for new variables
-        tmp_env[i++] = NULL;    //and null-terminating the tab
-    free(*env); //freeing previous tab of *char
+        tmp_env[i++] = NULL;    //and null-terminating the array
+    free(*env); //freeing previous array of *char
     *env = tmp_env;
     return (0);
 }
@@ -165,7 +165,6 @@ int		len_var_name(char *var)
 	return (i);
 }
 
-
 /*
 ** Returns 1 if *var doesn't exist in the environnement, 0 otherwise.
 */
@@ -181,15 +180,15 @@ int     is_it_new_variable(char *var, char **env)
     while (env[i] && (ft_strncmp(var, env[i], var_len) || 
 			len_var_name(var) != len_var_name(env[i]))) //until we match an existing variable
         i++;
-    if (!(env[i])) //if we reached end of env tab, the variable doesn't exist
+    if (!(env[i])) //if we reached end of env array, the variable doesn't exist
         return (1);
     return (0);
 }
 
 /*
-** Adds ="" after the variable if it doesn't already have =.
+** Adds = after the variable.
 */
-int		add_equal_and_quotes(char **env, int i)
+int		add_equal(char **env, int i)
 {
 	int		j;
 	int		len;
@@ -201,13 +200,11 @@ int		add_equal_and_quotes(char **env, int i)
 		j++;
 	if (env[i][j] == '=') //no need to change anything
 		return (0);
-	if (!(tmp = malloc(len + 4))) //+3 for ="" and +1 for '\0'
+	if (!(tmp = malloc(len + 2))) //+1 for = and +1 for '\0'
 		return (1);
-	tmp[len + 3] = '\0';
+	tmp[len + 1] = '\0';
 	ft_strlcpy(tmp, env[i], len + 1);
 	tmp[len] = '=';
-	tmp[len + 1] = '"';
-	tmp[len + 2] = '"';
 	free(env[i]);
 	env[i] = tmp;
 	return (0);
@@ -227,15 +224,13 @@ int		concatenate_values(char *var, char **env, int i)
 	while (var[j] && var[j] != '=')
 		j++;
 	size_new_var = (int)ft_strlen(&var[j + 1]);
-	if (add_equal_and_quotes(env, i)) //adding ="" if that's not already the case
+	if (add_equal(env, i)) //adding = if that's not already the case
 		return (1);
 	size_prev_var = (int)ft_strlen(env[i]);
 	if (!(tmp = malloc(size_new_var + size_prev_var + 1)))
 		return (1);
-	ft_strlcpy(tmp, env[i], size_prev_var); //copying previous var except last "
-	ft_strlcpy(tmp + size_prev_var - 1, &var[j + 1], size_new_var + 1); //copying new var's value (after =)
-	tmp[size_prev_var + size_new_var - 1] = '"';
-	tmp[size_prev_var + size_new_var] = '\0';
+	ft_strlcpy(tmp, env[i], size_prev_var + 1); //copying previous var
+	ft_strlcpy(tmp + size_prev_var, &var[j + 1], size_new_var + 1); //copying new var's value (after =)
 	free(env[i]);
 	env[i] = tmp;
 	return (0);
@@ -249,7 +244,6 @@ int     update_variable(char *var, char **env)
 {
     int     i;
     int     var_len; //size of the variable before sign '=' (ex toto=ta >> var_len = 4)
-    char    *tmp;
 
     i = 0;
     var_len = 0;
@@ -262,11 +256,8 @@ int     update_variable(char *var, char **env)
 	if (var[var_len] == '=') //if we just need to change the value
 	{
 		free(env[i]); //freeing previous variable
-		if (!(tmp = ft_strdup(var)))
+		if (!(env[i] = ft_strdup(var)))
 			return (1);
-		if (!(env[i] = add_quotes(tmp)))
-			return (1);
-		free(tmp);
 	}
 	else if (concatenate_values(var, env, i)) //in the case of '+='
 		return (1);
@@ -275,7 +266,7 @@ int     update_variable(char *var, char **env)
 
 /*
 ** Returns 0 if the variable's name is correct, 1 otherwise (first charac must be alpha,
-** all the others ones until '\0' or '=' or '+=' must be alphanum. '_' is authorized).
+** all the others ones until null-terminated / '=' / '+=' must be alphanum. '_' is authorized).
 */
 int		check_name_var(char *var)
 {
@@ -305,7 +296,7 @@ int     builtin_export(char **args, char ***env)
 	ret_value = 0;
     if (args && !args[1]) //if no arguments and only export cmd >> prints env
     {
-        print_sort_env(copy_env(*env, 0));
+        print_sort_env(copy_env(*env, 1));
         return (0);
     }
     if (args[1][0] == '-') //our export doesn't handle options
@@ -320,10 +311,10 @@ int     builtin_export(char **args, char ***env)
 		}
         else if (is_it_new_variable(args[i], *env)) //if the variable doesn't exist in the environnement
         {
-            if (create_new_env_tab(env, 1)) //add one *char to the end of env tab for new var
+            if (create_new_env_array(env, 1)) //add one *char to the end of env array for new var
                 return (error_msg("minishell: export: malloc failed\n", 1));
             j = 0;
-            while ((*env)[j]) //going to the end of the actual env tab
+            while ((*env)[j]) //going to the end of the actual env array
                 j++;
             if (!((*env)[j] = add_new_variable(args[i])))
                 return (error_msg("minishell: export: malloc failed\n", 1));

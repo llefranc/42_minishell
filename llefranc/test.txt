@@ -1,0 +1,1 @@
+export tata titi= tutu=5 tete+=4 trtr trtr=4 tbtb tbtb+=3 tntn=5 tntn+=6 tmtm= tmtm=4535 tmtm+=3231 1fhsbf

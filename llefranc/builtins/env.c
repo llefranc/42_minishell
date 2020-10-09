@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:35:53 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/08 15:28:26 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/09 11:32:28 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int		there_is_equal(char *var)
 }
 
 /*
-** Prints all the environnement variables of the shell on stdout.
+** Prints all the environnement variables with values on stdout.
 ** Doesn't take arguments neither options.
 */
 int		builtin_env(char **args, char **env)
