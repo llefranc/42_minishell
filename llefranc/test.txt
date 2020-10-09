@@ -1,1 +1,17 @@
 export tata titi= tutu=5 tete+=4 trtr trtr=4 tbtb tbtb+=3 tntn=5 tntn+=6 tmtm= tmtm=4535 tmtm+=3231 1fhsbf
+
+cd ////Users/djhhk////fsdk////fdfs/
+cd //users/tmp
+cd llefranc/a.out.dSYM/Contents/Resources/DWARF/..
+cd llefranc/a.out.dSYM/Contents/Resources/DWARF/../.. 
+cd llefranc/a.out.dSYM/Contents/Resources/DWARF/../../../ 
+cd llefranc/./././a.out.dSYM/./Contents/Resources/DWARF/../../../ 
+cd llefranc/./././a.out.dSYM/./../.././.././.././../Contents/Resources/DWARF/../../../
+cd /..
+cd /.
+cd /./../
+cd /../
+cd //./////../
+cd //user///djdhba//da/.///..//.//..
+cd ///user///djfsbfs//da/././..//.//../
+cd a.out.dSYM/Contents/Resources/../////..///..//a.out.dSYM/Contents/Resources/././.

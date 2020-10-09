@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/09 10:39:03 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/09 17:10:30 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <dirent.h>
 # include <sys/wait.h>
 # include <sys/errno.h>
+# include <sys/stat.h>
 
 # include "libftprintf.h"
 

@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/09 11:57:40 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/09 12:16:08 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,7 @@ int		concatenate_values(char *var, char **env, int i)
 	while (var[j] && var[j] != '=')
 		j++;
 	size_new_var = (int)ft_strlen(&var[j + 1]);
-	if (add_equal(env, i)) //adding = if that's not already the case
+	if (add_equal(env, i)) //adding '=' if that's not already the case
 		return (1);
 	size_prev_var = (int)ft_strlen(env[i]);
 	if (!(tmp = malloc(size_new_var + size_prev_var + 1)))
