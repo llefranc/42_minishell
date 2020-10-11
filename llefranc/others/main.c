@@ -6,11 +6,12 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/09 11:58:08 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/11 14:11:54 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
 
 char	**copy_env(char **env, int add_quotes_bool);
 
@@ -22,13 +23,13 @@ char	**copy_env(char **env, int add_quotes_bool);
 //env >> output
 //exit
 
+//penser a integrer RETURN SUCCESS RETURN FAILURE
 //penser a mettre en variable globale le retour des fonctions et le ptr qui tient
 
 int		find_builtin(char **args, char ***env, int *ret_func)
 {
 	int ret;
 	
-	(void)env;
 	ret = 0;
 	if (!args)
 		return (ret);

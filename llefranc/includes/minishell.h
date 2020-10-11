@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/09 17:10:30 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/11 14:45:57 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@
 # include <sys/stat.h>
 
 # include "libftprintf.h"
+
+# define SUCESS 0
+# define FAILURE 1
+
+char	*global_path;
 
 //--------------------- UTILS ---------------------
 int		error_msg(char *msg, int return_value);

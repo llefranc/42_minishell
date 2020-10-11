@@ -15,3 +15,5 @@ cd //./////../
 cd //user///djdhba//da/.///..//.//..
 cd ///user///djfsbfs//da/././..//.//../
 cd a.out.dSYM/Contents/Resources/../////..///..//a.out.dSYM/Contents/Resources/././.
+cd .././codebrai/../../06_minishell/llefranc/
+cd ..//////..///..//.

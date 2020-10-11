@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/09 18:48:14 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/11 14:53:04 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ int		len_var_name(char *var);
 
 //>>gerer le cas de cd ""
 
-//gerer le cas de cd //Users etc >> le double slash
+//gerer le cas de cd //Users etc >> le double slash >>implementer global_path a la place de path
+
+//rajouter le tilde dans cd
 
 // bash-3.2$ cd s
 // bash: cd: s: No such file or directory
@@ -44,6 +46,12 @@ int		len_var_name(char *var);
 // If ‘..’ appears in directory, it is processed by removing the immediately preceding pathname component,
 // back to a slash or the beginning of directory.
 // The return status is zero if the directory is successfully changed, non-zero otherwise.
+
+// PENSER A TESTER >> les leaks, les unset de pwd oldpwd alterné entre eux, le fait
+//que oldpwd s'appuie bine sur pwd quand celui-ci est present, les messages d'erreur.
+//Bien tester le comportement de cd
+
+//voir aussi le cas des liens symboliques, bien actualiser cd et pwd
 
 /*
 ** Searches for HOME environnement variable and returns a *char with only the
@@ -222,7 +230,7 @@ int		error_no_file(char *arg, char **env, char *path)
 		ft_printf("minishell: cd: %s: No such file or directory\n", env[i] + 5);
 	}
 	free(path);
-	return (1);
+	return (FAILURE);
 }
 
 /*
@@ -242,7 +250,7 @@ int		error_not_dir(char *arg, char **env, char *path)
 		ft_printf("minishell: cd: %s: Not a directory\n", env[i] + 5);
 	}
 	free(path);
-	return (1);
+	return (FAILURE);
 }
 
 /*
@@ -252,7 +260,7 @@ int		cd_error_need_free(char *str_error, char *path)
 {
 	ft_printf("%s", str_error);
 	free(path);
-	return (1);
+	return (FAILURE);
 }
 
 /*
@@ -264,15 +272,25 @@ int		update_env(char *var, char *path, char **env, int i)
 	char *tmp;
 
 	if (!(tmp = ft_strjoin(var, path)))
-		return (1);
+		return (FAILURE);
 	free(env[i]);
 	env[i] = tmp;
-	return (0);
+	return (SUCESS);
 }
 
-// PENSER A TESTER >> les leaks, les unset de pwd oldpwd alterné entre eux, le fait
-//que oldpwd s'appuie bine sur pwd quand celui-ci est present, les messages d'erreur.
-//Bien tester le comportement de cd
+/*
+** Returns the index of var in environnement array.
+*/
+int		find_var_in_env(char *var, char **env)
+{
+	int		i;
+
+	i = 0;
+	while (env[i] && (ft_strncmp(var, env[i], ft_strlen(var)) || 
+		len_var_name(var) != len_var_name(env[i]))) //until we match an existing variable
+		i++;
+	return (i);
+}
 
 int		update_env_pwd_oldpwd(char *path, char **env)
 {
@@ -280,70 +298,85 @@ int		update_env_pwd_oldpwd(char *path, char **env)
 	int		j;
 	char	*oldpwd;
 
-	i = 0;
-	j = 0;
+	i = find_var_in_env("PWD", env);
+	j = find_var_in_env("OLDPWD", env);
 	//OLDPWD
-	while (env[i] && (ft_strncmp("PWD", env[i], 3) || 
-		len_var_name("PWD") != len_var_name(env[i]))) //until we match an existing variable
-		i++;
-	while (env[j] && (ft_strncmp("OLDPWD", env[j], 6) || 
-		len_var_name("OLDPWD") != len_var_name(env[j]))) //until we match an existing variable
-		j++;
-	if (env[j] && env[i] && !(env[j] = ft_strdup(env[i]))) //copying $PWD in old $PWD if both exist
-		return (1);
+	if (env[j] && env[i] && update_env("OLDPWD=", &env[i][4], env, j)) //copying $PWD in $OLDPWD if both exist
+		return (FAILURE);
 	else if (env[j] && !env[i]) //$PWD missing
 	{
 		if (!(oldpwd = getcwd(NULL, 0)))
-			return (1);
-		if (!(update_env("OLDPWD", oldpwd, env, j)))
+			return (FAILURE);
+		if (update_env("OLDPWD=", oldpwd, env, j))
 		{
 			free(oldpwd);
-			return (1);
+			return (FAILURE);
 		}
 		free(oldpwd);
 	}
-
-
 	//PWD
+	//peut etre fiare ici avec getcwd
 	i = 0;
 	while (path[i])
 		i++;
 	if (i > 2 && path[i - 1] == '/')	//removing the shlash at the end if it exist
 		path[i - 1] = '\0';				//except when path is '/' or '//
+	i = find_var_in_env("PWD", env);
+	if (env[i] && update_env("PWD=", path, env , i)) //if $HOME var exists we update it
+		return (FAILURE);
 	i = 0;
-	while (env[i] && (ft_strncmp("PWD", env[i], 3) || 
-		len_var_name("PWD") != len_var_name(env[i]))) //until we match an existing variable
-		i++;
-	if (env[i] && !update_env("PWD=", path, env , i)) //if $HOME var exists we update it
-		return (1);
+	return (SUCESS);
+}
+
+/*
+** Allow to keep tracks of $PWD even if $PWD is unset. Needed for the case of
+** //tmp because getcwd function will return /tmp, it's the only way to save //.
+*/
+int		init_global_path(char **env)
+{
+	int		i;
+
 	i = 0;
-	return (0);
+	if (!global_path) //if global_path == NULL, first launch of cd, global_path need to be initialize
+	{
+		i = find_var_in_env("PWD", env);
+		if (!env[i]) //if $PWD is unset
+		{
+			if (!(global_path = getcwd(NULL, 0)))
+				return (FAILURE);
+		}
+		else if (!(global_path = ft_strdup(&env[i][4]))) //starting after PWD=
+			return (FAILURE);
+	}
+	return (SUCESS);
 }
 
 int		builtin_cd(char **args, char **env)
 {
-	// char	*oldpwd;	//for updating OLDPWD env var
 	char	*path;		//path will be send to chdir func
 	struct stat	info_file;
 	
+	if (init_global_path(env))
+		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
 	if (args && args[1] && args[1][0] == '-') //our cd doesn't handle options
-        return (error_msg("minishell: cd: no options are allowed\n", 1));
+        return (error_msg("minishell: cd: no options are allowed\n", FAILURE));
 	if (args && !args[1]) //if no arg, cd use HOME environnement variable
 	{
 		if (!(path = copy_home_var(env)))
-			return (error_msg("minishell: cd: HOME not set\n", 1));
+			return (error_msg("minishell: cd: HOME not set\n", FAILURE));
 	}
 	else if (!(path = treat_relative_path(args[1]))) //modifying path for use in lstat / chdir functions
-		return (error_msg("minishell: cd: malloc failed\n", 1));
+		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
 	ft_printf("path = |%s|\n", path);
 	if (lstat(path, &info_file) == -1) //checking if path exist
 		return (error_no_file(args[1], env, path));
-	if ((info_file.st_mode & S_IFMT) != S_IFDIR) //checking if the file is a directory
-		return (error_not_dir(args[1], env, path));
+	// if ((info_file.st_mode & S_IFMT) != S_IFDIR) //checking if the file is a directory
+	// 	return (error_not_dir(args[1], env, path));
 	if (chdir(path) == -1)
-		return (cd_error_need_free("minishell: cd: chdir failed", path));
+		return (error_not_dir(args[1], env, path));
 	if (update_env_pwd_oldpwd(path, env))
-		return (cd_error_need_free("minishell: cd: malloc failed", path));
+		return (cd_error_need_free("minishell: cd: malloc failed\n", path));
+
 	free(path);
-	return (0);
+	return (SUCESS);
 }
