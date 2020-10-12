@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/09 12:16:08 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/12 15:21:57 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,6 +286,7 @@ int		check_name_var(char *var)
 ** If no arguments, prints all the variables sorted by alphabetical order on
 ** stdout. If arguments, adds the new variables to the environnement / or
 ** update their values if they already exist. Doesn't take any options.
+** Returns 0 if success, 1 if failure.
 */
 int     builtin_export(char **args, char ***env)
 {
