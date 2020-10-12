@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 17:42:10 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/09 11:57:57 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/12 18:01:08 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int     reduce_env_array(char ***env, char *old_var)
     while ((*env)[i])
         i++;
     if (!(tmp_env = malloc(sizeof(*env) * i))) //duplicating env array minus one variable
-        return (1);
+        return (FAILURE);
     tmp_env[i - 1] = NULL;
     i = 0;
     j = 0;
@@ -49,7 +49,7 @@ int     reduce_env_array(char ***env, char *old_var)
     }
     free(*env); //freeing previous array of *char
     *env = tmp_env;
-    return (0);
+    return (SUCCESS);
 }
 
 /*
@@ -70,6 +70,11 @@ int		check_name_var_unset(char *var)
 	return (1);
 }
 
+/*
+** If no arguments, do nothing. If arguments, removes them from the
+** environnement array. Returns SUCCESS if everything went well, FAILURE
+** if a variable name isn't correct or an error occured.
+*/
 int     builtin_unset(char **args, char ***env)
 {
     int     i;
@@ -78,20 +83,20 @@ int     builtin_unset(char **args, char ***env)
     if (args && !args[1]) //if no arguments and only unset cmd >> nothing
         return (0);
     if (args[1][0] == '-') //our unset doesn't handle options
-        return (error_msg("minishell: unset: no options are allowed\n", 1));
+        return (error_msg("minishell: unset: no options are allowed\n", FAILURE));
 	i = 0;
-	ret_value = 0;
+	ret_value = SUCCESS;
     while (args[++i]) //first i is 1, cause args[0] is unset cmd
     {
 		if (check_name_var_unset(args[i]))	//if name of variable isn't correct >> we don't unset
 		{									// and we set return value to error code (1)
-			ret_value = 1;
+			ret_value = FAILURE;
 			ft_printf("minishell: unset: `%s': not a valid identifier\n", args[i]);
 		}
         else if (!is_it_new_variable(args[i], *env))	//if the variable exist in the environnement
         {												//and there is no '=' inside
             if (reduce_env_array(env, args[i]))
-                return (error_msg("minishell: unset: malloc failed\n", 1));
+                return (error_msg("minishell: unset: malloc failed\n", FAILURE));
         }
     }
     return (ret_value);

@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:35:53 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/09 11:32:28 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/12 18:03:54 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,5 @@ int		builtin_env(char **args, char **env)
 			ft_printf("%s\n", *env); //print each env variable on stdout (only if there is an '=' inside)
 		env++;
 	}
-	return (0);
+	return (SUCCESS);
 }

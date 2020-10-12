@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/12 13:26:48 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/12 16:28:32 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 # include "libftprintf.h"
 
-# define SUCESS 0
+# define SUCCESS 0
 # define FAILURE 1
 
 char	*global_path;
@@ -37,5 +37,6 @@ int		builtin_export(char **args, char ***env);
 int     builtin_unset(char **args, char ***env);
 int		builtin_pwd(char **args);
 int		builtin_cd(char **args, char **env);
+int		builtin_exit(char **args, char **env);
 
 #endif

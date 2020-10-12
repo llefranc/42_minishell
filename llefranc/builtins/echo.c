@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:35:58 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/06 12:43:59 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/12 18:04:05 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int		builtin_echo(char **args)
 	if (!(*args))
 	{
 		ft_printf("\n");
-		return (0);
+		return (SUCCESS);
 	}
 	args = echo_n_opt(args, &n_opt); //looking for n_opt
 	while(args[i]) //printing each arg separated by a space
@@ -59,5 +59,5 @@ int		builtin_echo(char **args)
 	}
 	if (!n_opt) //if no option -n, we print a '\n'
 		ft_printf("\n");
-	return (0);
+	return (SUCCESS);
 }

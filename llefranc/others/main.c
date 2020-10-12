@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/12 15:09:01 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/12 15:23:27 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int		find_builtin(char **args, char ***env, int *ret_func)
 	!ft_strcmp("export", args[0]) && (ret = 1) ? *ret_func = builtin_export(args, env) : 0;
 	!ft_strcmp("unset", args[0]) && (ret = 1) ? *ret_func = builtin_unset(args, env) : 0;
 	!ft_strcmp("env", args[0]) && (ret = 1) ? *ret_func = builtin_env(args, *env) : 0;
-	// !ft_strcmp("exit", args[0]) && (ret = 1) ? ft_printf("salut\n") : 0;
+	!ft_strcmp("exit", args[0]) && (ret = 1) ? *ret_func = builtin_exit(args, *env) : 0;
 	// ft_printf("---------\n", ret);
 	return (ret);
 }

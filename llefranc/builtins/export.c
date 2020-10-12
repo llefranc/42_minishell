@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/12 15:21:57 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/12 18:03:46 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ int     create_new_env_array(char ***env, int number_new_vars)
         i++;
     size = i + number_new_vars; //future size of env array
     if (!(tmp_env = malloc(sizeof(*env) * (size + 1))))
-        return (1);
+        return (FAILURE);
     i = -1;
     while ((*env)[++i])
         tmp_env[i] = (*env)[i]; //copying adresses of previous array in new one
@@ -149,7 +149,7 @@ int     create_new_env_array(char ***env, int number_new_vars)
         tmp_env[i++] = NULL;    //and null-terminating the array
     free(*env); //freeing previous array of *char
     *env = tmp_env;
-    return (0);
+    return (SUCCESS);
 }
 
 /*
@@ -181,8 +181,8 @@ int     is_it_new_variable(char *var, char **env)
 			len_var_name(var) != len_var_name(env[i]))) //until we match an existing variable
         i++;
     if (!(env[i])) //if we reached end of env array, the variable doesn't exist
-        return (1);
-    return (0);
+        return (FAILURE);
+    return (SUCCESS);
 }
 
 /*
@@ -199,7 +199,7 @@ int		add_equal(char **env, int i)
 	while (env[i][j] && env[i][j] != '=')
 		j++;
 	if (env[i][j] == '=') //no need to change anything
-		return (0);
+		return (SUCCESS);
 	if (!(tmp = malloc(len + 2))) //+1 for = and +1 for '\0'
 		return (1);
 	tmp[len + 1] = '\0';
@@ -207,7 +207,7 @@ int		add_equal(char **env, int i)
 	tmp[len] = '=';
 	free(env[i]);
 	env[i] = tmp;
-	return (0);
+	return (SUCCESS);
 }
 
 /*
@@ -225,15 +225,15 @@ int		concatenate_values(char *var, char **env, int i)
 		j++;
 	size_new_var = (int)ft_strlen(&var[j + 1]);
 	if (add_equal(env, i)) //adding '=' if that's not already the case
-		return (1);
+		return (FAILURE);
 	size_prev_var = (int)ft_strlen(env[i]);
 	if (!(tmp = malloc(size_new_var + size_prev_var + 1)))
-		return (1);
+		return (FAILURE);
 	ft_strlcpy(tmp, env[i], size_prev_var + 1); //copying previous var
 	ft_strlcpy(tmp + size_prev_var, &var[j + 1], size_new_var + 1); //copying new var's value (after =)
 	free(env[i]);
 	env[i] = tmp;
-	return (0);
+	return (SUCCESS);
 }
 
 /*
@@ -250,18 +250,18 @@ int     update_variable(char *var, char **env)
     while(var[var_len] && var[var_len] != '=' && var[var_len] != '+')
         var_len++;
     if (var[var_len] == '\0') //if just toto without '=', no need to update
-        return (0);
+        return (SUCCESS);
     while (env[i] && ft_strncmp(var, env[i], var_len)) //until we match an existing variable
         i++;
 	if (var[var_len] == '=') //if we just need to change the value
 	{
 		free(env[i]); //freeing previous variable
 		if (!(env[i] = ft_strdup(var)))
-			return (1);
+			return (FAILURE);
 	}
 	else if (concatenate_values(var, env, i)) //in the case of '+='
-		return (1);
-    return (0);
+		return (FAILURE);
+    return (SUCCESS);
 }
 
 /*
@@ -294,35 +294,35 @@ int     builtin_export(char **args, char ***env)
     int     j;
 	int		ret_value;
 
-	ret_value = 0;
+	ret_value = SUCCESS;
     if (args && !args[1]) //if no arguments and only export cmd >> prints env
     {
         print_sort_env(copy_env(*env, 1));
         return (0);
     }
     if (args[1][0] == '-') //our export doesn't handle options
-        return (error_msg("minishell: export: no options are allowed\n", 1));
+        return (error_msg("minishell: export: no options are allowed\n", FAILURE));
     i = 0;
     while (args[++i]) //first i is 1, cause args[0] is export cmd
     {
 		if (check_name_var(args[i]))	//if name of variable isn't correct >> we don't export
-		{								// and we set return value to error code (1)
-			ret_value = 1;
+		{								// and we set return value to error code FAILURE
+			ret_value = FAILURE;
 			ft_printf("minishell: export: `%s': not a valid identifier\n", args[i]);
 		}
         else if (is_it_new_variable(args[i], *env)) //if the variable doesn't exist in the environnement
         {
             if (create_new_env_array(env, 1)) //add one *char to the end of env array for new var
-                return (error_msg("minishell: export: malloc failed\n", 1));
+                return (error_msg("minishell: export: malloc failed\n", FAILURE));
             j = 0;
             while ((*env)[j]) //going to the end of the actual env array
                 j++;
             if (!((*env)[j] = add_new_variable(args[i])))
-                return (error_msg("minishell: export: malloc failed\n", 1));
+                return (error_msg("minishell: export: malloc failed\n", FAILURE));
         }
         else        //args[i] already exist in the environnement, so we just update the value
             if (update_variable(args[i], *env))
-                return (error_msg("minishell: export: malloc failed\n", 1));
+                return (error_msg("minishell: export: malloc failed\n", FAILURE));
     }
     return (ret_value);
 }

@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/12 15:22:11 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/12 18:04:26 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ int		remove_multiple_slash(char *path)
 	int		i;
 
 	if (!path[0]) //case cd ""
-		return (SUCESS);
+		return (SUCCESS);
 	i = 0;
 	if (path[i] == '/' && path[i + 1] == '/' && path[i + 2] == '/') //if there is at least 3 slashs at beginning of path >> we keep only one
 		i = -1;														//otherwise we do not treat first '/' because it can be double (only the first one !)
@@ -204,7 +204,7 @@ int		remove_multiple_slash(char *path)
 			i--;
 		}
 	}
-	return (SUCESS);
+	return (SUCCESS);
 }
 
 /*
@@ -253,7 +253,7 @@ int		update_env(char *var, char *path, char **env, int i)
 		return (FAILURE);
 	free(env[i]);
 	env[i] = tmp;
-	return (SUCESS);
+	return (SUCCESS);
 }
 
 /*
@@ -274,7 +274,7 @@ int		update_env_pwd_oldpwd(char *path, char **env)
 	i = find_var_in_env("PWD", env);
 	if (env[i] && update_env("PWD=", path, env , i)) //if $HOME var exists we update it
 		return (FAILURE);
-	return (SUCESS);
+	return (SUCCESS);
 }
 
 /*
@@ -297,7 +297,7 @@ int		init_global_path(char **env)
 		else if (!(global_path = ft_strdup(&env[i][4]))) //starting after PWD=
 			return (FAILURE);
 	}
-	return (SUCESS);
+	return (SUCCESS);
 }
 
 /*
@@ -332,5 +332,5 @@ int		builtin_cd(char **args, char **env)
 		return (cd_error_need_free("minishell: cd: malloc failed\n", path));
 	free(global_path);
 	global_path = path;
-	return (SUCESS);
+	return (SUCCESS);
 }
