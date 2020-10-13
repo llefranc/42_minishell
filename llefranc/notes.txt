@@ -96,6 +96,8 @@ head -n 2 < harry > test | sort > test2
 sort > test2 | head -n 2 > harry < test > test3
 head -n 2 < harry > test | sort > test2
 
+echo ok > text.txt salut
+
 l'ordre semble etre ';' > pipe > fork > redirection > execution 
 on cree les fichiers des redirections inputs puis on fait les redirections output et emsuiite on exec
 les redirections semblent ecraser les pipes >> elles doivent close les FD (ce qui a pour consequence

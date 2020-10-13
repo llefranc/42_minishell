@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/12 15:23:27 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/13 14:48:56 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,34 +26,30 @@ int		find_var_in_env(char *var, char **env);
 //gerer le cas ou le cd est a la fin d'un pipe 
 
 //penser a mettre en variable globale le retour des fonctions et le ptr qui tient le tab de structs
-#include <stdio.h>
+// echo ok > text.txt salut
 
-int		find_builtin(char **args, char ***env, int *ret_func)
+t_token		**create_token_array(char **args)
 {
-	int ret;
-	
-	ret = 0;
-	if (!args)
-		return (ret);
-	!ft_strcmp("echo", args[0]) && (ret = 1) ? *ret_func = builtin_echo(args) : 0; //if args[0] match one builtin, put ret value to 0 and launch the appropriate builtin
-	!ft_strcmp("cd", args[0]) && (ret = 1) ? *ret_func = builtin_cd(args, *env) : 0;
-	!ft_strcmp("pwd", args[0]) && (ret = 1) ? *ret_func = builtin_pwd(args) : 0;
-	!ft_strcmp("export", args[0]) && (ret = 1) ? *ret_func = builtin_export(args, env) : 0;
-	!ft_strcmp("unset", args[0]) && (ret = 1) ? *ret_func = builtin_unset(args, env) : 0;
-	!ft_strcmp("env", args[0]) && (ret = 1) ? *ret_func = builtin_env(args, *env) : 0;
-	!ft_strcmp("exit", args[0]) && (ret = 1) ? *ret_func = builtin_exit(args, *env) : 0;
-	// ft_printf("---------\n", ret);
-	return (ret);
+	t_token **tok;
+	int		i = -1;
+
+	tok = malloc(sizeof(*tok) * 2);
+	tok[1] = NULL;
+	while (tok[++i])
+		tok[i] = malloc(sizeof(**tok));
+	tok[0]->ptr = args;
+	tok[0]->type = EXEC;
+	return (tok);
 }
 
-#include <stdio.h>
 int main(int ac, char *av[], char *env[])
 {
-	int ret_func = 0;
 	int	ret_gnl = 1;
 	char *line = NULL;
 	char **cmd;
-	char **env_shell;
+	char **env_shell; //copy of env
+	t_token **tok;
+
 
 	(void)av;
 	if (!(env_shell = copy_env(env, 0)))
@@ -75,10 +71,11 @@ int main(int ac, char *av[], char *env[])
 		}
 
 		cmd = ft_split(line, ' ');
-		if (!find_builtin(cmd, &env_shell, &ret_func))
-			ft_printf("this command isn't a builtin command\n");
+		tok = create_token_array(cmd);
+		if (execution(tok, &env_shell))
+			ft_printf("sortie de exec_part sans aucune commande lancee\n");
 		// ft_printf("ret_func = %d\n>>> ", ret_func);
-		ft_printf("minishel$ ", ret_func);
+		ft_printf("minishel$ ");
 		free(line);
 		free_split(cmd);
 		line = NULL;

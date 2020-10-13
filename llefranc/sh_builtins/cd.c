@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/12 18:04:26 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/13 14:32:05 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,16 @@ int		find_var_in_env(char *var, char **env)
 /*
 ** Prints an error message with either path or $HOME, frees path and returns 1.
 */
-int		error_no_file(char *arg, char **env, char *path)
+int		error_no_file(char *arg, char **env, char *path, char *cmd)
 {
 	int		i;
 
 	i = 0;
-	arg ? ft_printf("minishell: cd: %s: No such file or directory\n", arg) : 0;
+	arg ? ft_printf("minishell: %s: %s: No such file or directory\n", cmd, arg) : 0;
 	if (!arg)
 	{
 		i = find_var_in_env("HOME", env);
-		ft_printf("minishell: cd: %s: No such file or directory\n", env[i] + 5);
+		ft_printf("minishell: %s: %s: No such file or directory\n", cmd, env[i] + 5);
 	}
 	free(path);
 	return (FAILURE);
@@ -49,16 +49,16 @@ int		error_no_file(char *arg, char **env, char *path)
 /*
 ** Prints an error message with either path or $HOME, frees path and returns 1.
 */
-int		error_not_dir(char *arg, char **env, char *path)
+int		error_not_dir(char *arg, char **env, char *path, char *cmd)
 {
 	int		i;
 
 	i = 0;
-	arg ? ft_printf("minishell: cd: %s: Not a directory\n", arg) : 0;
+	arg ? ft_printf("minishell: %s: %s: Not a directory\n", cmd, arg) : 0;
 	if (!arg)
 	{
 		i = find_var_in_env("HOME", env);
-		ft_printf("minishell: cd: %s: Not a directory\n", env[i] + 5);
+		ft_printf("minishell: %s: %s: Not a directory\n", cmd, env[i] + 5);
 	}
 	free(path);
 	return (FAILURE);
@@ -78,7 +78,7 @@ int		cd_error_need_free(char *str_error, char *path)
 ** Searches for HOME environnement variable and returns a *char with only the
 ** path. If HOME isn't set, returns NULL.
 */
-char	*copy_home_var(char **env)
+char	*copy_home_var(char **env, char *cmd)
 {
 	int		i;
 	char	*tmp;
@@ -86,9 +86,15 @@ char	*copy_home_var(char **env)
 	i = 0;
 	i = find_var_in_env("HOME", env);
 	if (!env[i] || (env[i] && ft_strncmp(env[i], "HOME=", 5)))	//HOME variable doesn't exist
-		return (error_msg_ptr("minishell: cd: HOME not set\n", NULL));
+	{
+		ft_printf("minishell: %s: malloc failed\n", cmd);
+		return (NULL);
+	}
 	if (!(tmp = ft_strdup(env[i])))
-		return (error_msg_ptr("minishell: cd: malloc failed\n", NULL));
+	{
+		ft_printf("minishell: %s: malloc failed\n", cmd);
+		return (NULL);
+	}
 	ft_strlcpy(tmp, tmp + 5, ft_strlen(tmp + 5) + 1); //removing HOME=
 	return (tmp);
 }
@@ -225,11 +231,11 @@ char	*treat_relative_path(char *arg, char **env)
 	}
 	else if (arg[0] == '~')
 	{
-		if (!(path = copy_home_var(env))) //path = $HOME
+		if (!(path = copy_home_var(env, "cd"))) //path = $HOME
 			return (NULL);
 		if (arg[1] != '/' && arg[1] != '\0') //case ~ without / (ex : ~Dir >> error)
 		{
-			error_no_file(arg, env, path);
+			error_no_file(arg, env, path, "cd");
 			return (NULL);
 		}
 		i = (arg[1] == '/' && path[1] != '\0') ? 1 : 0; //for cd ~/ with $HOME=/
@@ -317,7 +323,7 @@ int		builtin_cd(char **args, char **env)
         return (error_msg("minishell: cd: no options are allowed\n", FAILURE));
 	if (args && !args[1]) //if no arg, cd use HOME environnement variable
 	{
-		if (!(path = copy_home_var(env)))
+		if (!(path = copy_home_var(env, "cd")))
 			return (FAILURE);
 	}
 	else if (!(path = treat_relative_path(args[1], env))) //modifying path for use in lstat / chdir functions
@@ -325,9 +331,9 @@ int		builtin_cd(char **args, char **env)
 	if (!remove_multiple_slash(path) && !(path = remove_dots(path))) //modifying path for use in lstat / chdir functions
 		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
 	if (lstat(path, &info_file) == -1) //checking if path exist
-		return (error_no_file(args[1], env, path));
+		return (error_no_file(args[1], env, path, "cd"));
 	if (chdir(path) == -1)
-		return (error_not_dir(args[1], env, path));
+		return (error_not_dir(args[1], env, path, "cd"));
 	if (update_env_pwd_oldpwd(path, env))
 		return (cd_error_need_free("minishell: cd: malloc failed\n", path));
 	free(global_path);
