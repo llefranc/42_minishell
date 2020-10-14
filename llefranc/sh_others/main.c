@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/13 14:48:56 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/14 17:19:59 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int		find_var_in_env(char *var, char **env);
 //exit
 //gerer le cas ou le cd est a la fin d'un pipe 
 
+//penser a ajouter fd_printf
 //penser a mettre en variable globale le retour des fonctions et le ptr qui tient le tab de structs
 // echo ok > text.txt salut
 

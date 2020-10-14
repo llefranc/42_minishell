@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/13 14:32:05 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/14 17:12:42 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,7 @@ char	*treat_relative_path(char *arg, char **env)
 	path = NULL;
 	if (arg[0] != '/' && arg[0] != '~') //if relative path
 	{
+
 		if (!(path = ft_strdup(global_path)) || !(path = add_absolute_path_to_relative(path, arg)))
 			return (error_msg_ptr("minishell: cd: malloc failed\n", NULL));
 	}
@@ -321,19 +322,20 @@ int		builtin_cd(char **args, char **env)
 		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
 	if (args && args[1] && args[1][0] == '-') //our cd doesn't handle options
         return (error_msg("minishell: cd: no options are allowed\n", FAILURE));
+		
 	if (args && !args[1]) //if no arg, cd use HOME environnement variable
 	{
 		if (!(path = copy_home_var(env, "cd")))
 			return (FAILURE);
 	}
-	else if (!(path = treat_relative_path(args[1], env))) //modifying path for use in lstat / chdir functions
+	else if (!(path = treat_relative_path(args[1], env))) //we treat the argument for updating $PWD
 		return (FAILURE);
-	if (!remove_multiple_slash(path) && !(path = remove_dots(path))) //modifying path for use in lstat / chdir functions
-		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
-	if (lstat(path, &info_file) == -1) //checking if path exist
+	if (stat(path, &info_file) == -1) //checking if file's path / directory's path exists
 		return (error_no_file(args[1], env, path, "cd"));
-	if (chdir(path) == -1)
+	if (chdir(path) == -1) //using path and not args[1] because cd can be use without argument
 		return (error_not_dir(args[1], env, path, "cd"));
+	if (!remove_multiple_slash(path) && !(path = remove_dots(path))) //modifying path for updating $PWD
+		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
 	if (update_env_pwd_oldpwd(path, env))
 		return (cd_error_need_free("minishell: cd: malloc failed\n", path));
 	free(global_path);

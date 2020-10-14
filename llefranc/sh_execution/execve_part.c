@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:44:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/13 15:43:22 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/14 17:35:34 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,24 +98,18 @@ int		execute_relative_path(char **args, char **env)
 		if (!(path = add_absolute_path_to_relative(path, &args[0][0] + i + 1))) //joins $HOME value and arg without tilde
 			return (global_ret_value = error_msg("minishell: exe: malloc failed\n", FAILURE));
 		ft_printf("path = |%s|\n", path);
+		free(args[0]);
+		args[0] = path;
 	}
-	else
-	{
-		if (!(path = ft_strdup(global_path)) || !(path = add_absolute_path_to_relative(path, args[0])))
-			return (global_ret_value = error_msg("minishell: exe: malloc failed\n", FAILURE));
-	}
-	if (!remove_multiple_slash(path) && !(path = remove_dots(path))) //modifying path for use in lstat / chdir functions
-		return (global_ret_value = error_msg("minishell: cd: malloc failed\n", FAILURE));
-	free(args[0]);
-	args[0] = path;
-	ft_printf("path = |%s|\n", path);
-
 	execute_absolute_path(args, env);
 	return (SUCCESS);
 }
 
 int		execve_part(char **args, char **env)
 {
+	if (execve(args[0], args, env) == -1)
+		ft_printf("error\n");
+		return (FAILURE);
 	if (init_global_path(env))
 		return (global_ret_value = error_msg("minishell: cd: malloc failed\n", FAILURE));
 	if (args && args[0] && args[0][0] != '/' && (args[0][0] != '.' && (args[0][1] != '.'
