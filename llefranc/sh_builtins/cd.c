@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/14 17:12:42 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/15 17:56:20 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,16 +85,11 @@ char	*copy_home_var(char **env, char *cmd)
 
 	i = 0;
 	i = find_var_in_env("HOME", env);
-	if (!env[i] || (env[i] && ft_strncmp(env[i], "HOME=", 5)))	//HOME variable doesn't exist
-	{
-		ft_printf("minishell: %s: malloc failed\n", cmd);
+	if ((!env[i] || (env[i] && ft_strncmp(env[i], "HOME=", 5)))	//HOME variable doesn't exist
+			&& ft_printf("minishell: %s: malloc failed\n", cmd))
 		return (NULL);
-	}
-	if (!(tmp = ft_strdup(env[i])))
-	{
-		ft_printf("minishell: %s: malloc failed\n", cmd);
+	if (!(tmp = ft_strdup(env[i])) && ft_printf("minishell: %s: malloc failed\n", cmd))
 		return (NULL);
-	}
 	ft_strlcpy(tmp, tmp + 5, ft_strlen(tmp + 5) + 1); //removing HOME=
 	return (tmp);
 }
@@ -322,7 +317,6 @@ int		builtin_cd(char **args, char **env)
 		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
 	if (args && args[1] && args[1][0] == '-') //our cd doesn't handle options
         return (error_msg("minishell: cd: no options are allowed\n", FAILURE));
-		
 	if (args && !args[1]) //if no arg, cd use HOME environnement variable
 	{
 		if (!(path = copy_home_var(env, "cd")))

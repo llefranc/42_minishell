@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/13 14:37:48 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/15 17:14:30 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 
 # define SUCCESS 0
 # define FAILURE 1
-# define IS_A_DIREC 126
-# define NOT_FIND 127
+# define WRONG_FILE 126
+# define NOT_FOUND 127
 
 # define INPUT 0
 # define OUTPUT 1

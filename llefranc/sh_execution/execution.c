@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:23:44 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/13 14:22:28 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/15 17:03:08 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,6 @@ int		execution(t_token **tok, char ***env)
 			if (!find_builtin((char **)((tok[i])->ptr), env))
 				execve_part((char **)(tok[i]->ptr), *env);
 	}
+	ft_printf("retour fonction = %d\n", global_ret_value);
 	return (SUCCESS);
 }

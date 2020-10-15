@@ -6,20 +6,15 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:44:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/14 17:35:34 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/15 18:11:25 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int		len_var_name(char *var);
 int		find_var_in_env(char *var, char **env);
 char	*copy_home_var(char **env, char *cmd);
-int		error_no_file(char *arg, char **env, char *path, char *cmd);
 char	*add_absolute_path_to_relative(char *pwd, char *arg);
-int		init_global_path(char **env);
-char	*remove_dots(char *path);
-int		remove_multiple_slash(char *path);
 
 //gerer le tilde, les differentes path (ni . ni / ni ~), le relatif
 //gerrer le cas de juste execve le . .. ou le ~
@@ -28,57 +23,64 @@ int		remove_multiple_slash(char *path);
 // /../../../../../llefranc/Rendu/.vscode/../../../..///////////////////////////////////////////////////////////////////bin: exe: No such file or directory
 // cd //../../../../../llefranc/Rendu/.vscode/../../../..///////////////////////////////////////////////////////////////////bin >>devrait pas marcher masi se lance
 // a checker
-int		add_absolute_path_with_path_var(char **args, char **env)
+
+//penser a checker le cas de PATH sans = >> equivalent a si path est pas export 
+//penser a checker PATH=""
+
+/*
+** Returns 1 if there is a '/' in the string, 0 otherwise.
+*/
+int		there_is_a_slash(char *arg)
 {
 	int		i;
 
-	(void)args;
-	i = find_var_in_env("PATH", env);
-	if (!env[i])
-		return (SUCCESS); //PATH isn't set so only absolute path will be effective, we don't change the relative
-	
-	//remove multiple dots
-	//remove multiple slash
-	return (SUCCESS);
+	i = 0;
+	while (arg[i] && arg[i] != '/')
+		i++;
+	if (arg[i] == '/')
+		return (1);
+	return (0);
 }
-		// add_absolute_path_with_path_var(args, env);
 
-//execute abvec absolute path >>>>> termine
+/*
+** Forks the process, and launches execve. Returns the exit code of the forked process.
+*/
 int		execute_absolute_path(char **args, char **env)
 {
 	pid_t	pid;
 	int		status;
+	int		ret_value;
 	struct stat	info_file;
 
 	pid = fork();
+	ret_value = 0;
 	if (!pid) //child process
 	{
-		if (stat(args[0], &info_file) == -1) //checking if path exist
-		{
-			ft_printf("minishell: %s: exe: No such file or directory\n", args[0]);
-			exit(NOT_FIND);
-		}
-		if (S_ISDIR(info_file.st_mode))
-		{
-			ft_printf("minishell: %s: exe: is a directory\n", args[0]);
-			exit(IS_A_DIREC);
-		}
-		if (execve(args[0], args, env) == -1)
-			ft_printf("minishell: %s: exe: No such file or directory\n", args[0]);
-		exit(NOT_FIND); //error code when execve doesn't find file
+		if (stat(args[0], &info_file) == -1 && ft_printf("minishell: exe: %s: No such file or directory\n", args[0]))
+			return (NOT_FOUND); //checking if path exist
+		if (S_ISDIR(info_file.st_mode) && ft_printf("minishell: exe: %s: is a directory\n", args[0]))
+			return (WRONG_FILE); //checking if it's a directory or not
+		if (!(info_file.st_mode & S_IXUSR) && ft_printf("minishell: exe: %s: Permission denied\n", args[0]))
+			return (WRONG_FILE);
+		if (execve(args[0], args, env))
+			return (error_msg("minishell: exe: execve failed\n", NOT_FOUND));
 	}
-	else if (pid < 0)
+	else if (pid < 0) //a voir
 		return (error_msg("minishell: exe: fork failed\n", FAILURE));
 	else //parent process
 	{
-		waitpid(pid, &status, 0);
-		global_ret_value = WEXITSTATUS(status);
+		waitpid(pid, &status, 0); //wait until process previously created exits
+		ret_value = WEXITSTATUS(status);
 	}
-	return (SUCCESS);
+	return (ret_value);
 }
 
-//rajoute le chemin d'acces devant en focntion de si c'est un tilde ou . / ..
-int		execute_relative_path(char **args, char **env)
+/*
+** Launches execve for executing the command. If the relative path starts with
+** ~, joins the relative path with $HOME variable if it exists before execve. 
+** Returns the exit code of the forked process after execve use.
+*/
+int		execute_path(char **args, char **env)
 {
 	char	*path;
 	int		i;
@@ -88,38 +90,84 @@ int		execute_relative_path(char **args, char **env)
 	if (args[0][0] == '~')
 	{
 		if (!(path = copy_home_var(env, "exe")))
-			return (global_ret_value = FAILURE);
-		if (args[0][1] != '/' && args[0][1] != '\0') //case ~ without / (ex : ~Dir >> error)
-		{
-			ft_printf("minishell: %s: command not found\n", args[0]);
-			return (global_ret_value = NOT_FIND);
-		}
+			return (error_msg("minishell: exe: malloc failed\n", FAILURE));
+		if (args[0][1] != '/' && args[0][1] != '\0' && there_is_a_slash(args[0]) && //case ~ without / (ex : ~Dir >> error)
+				ft_printf("minishell: exe: %s: No such file or directory\n", args[0]))
+			return (NOT_FOUND);
+		else if (args[0][1] != '/' && args[0][1] != '\0' &&
+				ft_printf("minishell: exe: %s: command not found\n", args[0]))
+			return (NOT_FOUND);
 		i = (args[0][1] == '/' && path[1] != '\0') ? 1 : 0; //for execve ~/ with $HOME=/
 		if (!(path = add_absolute_path_to_relative(path, &args[0][0] + i + 1))) //joins $HOME value and arg without tilde
-			return (global_ret_value = error_msg("minishell: exe: malloc failed\n", FAILURE));
-		ft_printf("path = |%s|\n", path);
+			return (error_msg("minishell: exe: malloc failed\n", FAILURE));
 		free(args[0]);
 		args[0] = path;
 	}
-	execute_absolute_path(args, env);
-	return (SUCCESS);
+	i = execute_absolute_path(args, env); //executes the command
+	return (i);
+}
+
+/*
+** Tests each possible path with $PATH variable. Returns the correct one, or
+** NULL if none is working.
+*/
+char	*get_path(char **path, char *arg, int *j)
+{
+	char		*full_path;
+	char		*tmp;
+	struct stat	info_file;
+
+	while (path[++(*j)]) //testing each possible path
+	{
+		if (!(full_path = ft_strjoin(path[*j], "/")))
+			return (error_msg_ptr("minishell: exe: malloc failed\n", NULL));
+		tmp = full_path;
+		if (!(full_path = ft_strjoin(full_path, arg)))
+			return (error_msg_ptr("minishell: exe: malloc failed\n", NULL));
+		free(tmp);
+		if (!stat(full_path, &info_file)) //if stat == 0 the path is correct
+			return (full_path);
+		free(full_path);
+	}
+	return (NULL);
+}
+		
+int		execute_with_path_variable(char **args, char **env)
+{
+	int		i;
+	int		j;
+	char	*full_path;
+	char	**path;
+
+	i = find_var_in_env("PATH", env); //we already checked in execve_part that $PATH existed
+	j = 0;
+	while (env[i][j] && env[i][j] != '=')
+		j++;
+	env[i][j] != '=' ? j += 1 : 0; //we split after PATH=
+	if (!(path = ft_split(&env[i][j], ':')))
+		return (error_msg("minishell: exe: malloc failed\n", FAILURE));
+	j = -1;
+	if ((full_path = get_path(path, args[0], &j))) //if one possibility of $PATH is working
+	{
+		free(args[0]);
+		args[0] = full_path;
+		global_ret_value = execute_absolute_path(args, env);
+	}
+	else if (!path[j] &&
+			ft_printf("minishell: %s: command not found\n", args[0]))
+		return (NOT_FOUND);//full_path is NULL and j reached end of env >> no full_paths worked in get_path
+	else
+		return (FAILURE); //case malloc failed
+	free_split(path);
+	return (global_ret_value);
 }
 
 int		execve_part(char **args, char **env)
 {
-	if (execve(args[0], args, env) == -1)
-		ft_printf("error\n");
-		return (FAILURE);
-	if (init_global_path(env))
-		return (global_ret_value = error_msg("minishell: cd: malloc failed\n", FAILURE));
-	if (args && args[0] && args[0][0] != '/' && (args[0][0] != '.' && (args[0][1] != '.'
-			&& args[0][1] != '/')) && args[0][0] != '~' && env[find_var_in_env("PATH", env)])
-		ft_printf("relativepath with path var\n");
-		// return (execute_relative_path_with_path_var(args, env));
-	else if (args && args[0] && ((args[0][0] == '.' && (args[0][1] == '.'
-			|| args[0][1] == '/')) || args[0][0] == '~'))
-		return (execute_relative_path(args, env));
-	else //peut etre rajouter ici les tildes . .. sans backslash
-		return (execute_absolute_path(args, env));
-	return (SUCCESS);
+	if (args && args[0] && args[0][0] != '/' && !(args[0][0] == '.' &&
+			(args[0][1] == '/' || (args[0][1] == '.' && args[0][2] == '/')))
+			&& args[0][0] != '~' && env[find_var_in_env("PATH", env)]
+			&& !there_is_a_slash(args[0]))
+		return (global_ret_value = execute_with_path_variable(args, env));
+	return (global_ret_value = execute_path(args, env));
 }

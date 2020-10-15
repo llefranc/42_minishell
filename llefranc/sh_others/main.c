@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/14 17:19:59 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/15 12:39:02 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ int main(int ac, char *av[], char *env[])
 	char **cmd;
 	char **env_shell; //copy of env
 	t_token **tok;
-
 
 	(void)av;
 	if (!(env_shell = copy_env(env, 0)))
