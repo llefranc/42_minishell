@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/15 12:39:02 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/16 16:01:37 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@ int		find_var_in_env(char *var, char **env);
 //penser a mettre en variable globale le retour des fonctions et le ptr qui tient le tab de structs
 // echo ok > text.txt salut
 
-t_token		**create_token_array(char **args)
+t_token		**create_token_array(char **args, int size)
 {
 	t_token **tok;
 	int		i = -1;
 
-	tok = malloc(sizeof(*tok) * 2);
-	tok[1] = NULL;
-	while (tok[++i])
+	tok = malloc(sizeof(*tok) * (size + 1));
+	tok[size] = NULL;
+	while (++i < size)
 		tok[i] = malloc(sizeof(**tok));
 	tok[0]->ptr = args;
 	tok[0]->type = EXEC;
@@ -69,15 +69,18 @@ int main(int ac, char *av[], char *env[])
 			free(line);
 			continue ;
 		}
-
 		cmd = ft_split(line, ' ');
-		tok = create_token_array(cmd);
+		tok = create_token_array(cmd, 1);
 		if (execution(tok, &env_shell))
 			ft_printf("sortie de exec_part sans aucune commande lancee\n");
+		// system("leaks a.out");
 		// ft_printf("ret_func = %d\n>>> ", ret_func);
 		ft_printf("minishel$ ");
 		free(line);
 		free_split(cmd);
+		free(tok[1]);
+		free(tok[0]);
+		free(tok);
 		line = NULL;
 		cmd = NULL;
 	}

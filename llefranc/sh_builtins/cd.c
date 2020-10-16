@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/15 17:56:20 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/16 16:09:20 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,9 @@ char	*copy_home_var(char **env, char *cmd)
 
 	i = 0;
 	i = find_var_in_env("HOME", env);
-	if ((!env[i] || (env[i] && ft_strncmp(env[i], "HOME=", 5)))	//HOME variable doesn't exist
-			&& ft_printf("minishell: %s: malloc failed\n", cmd))
+	if ((!env[i] || (env[i] && ft_strncmp(env[i], "HOME=", 5)) ||				//HOME variable doesn't exist
+			(env[i] && !ft_strncmp(env[i], "HOME=", 5) && env[i][5] == '\0'))	//or HOME=""
+			&& ft_printf("minishell: %s: HOME not set\n", cmd))
 		return (NULL);
 	if (!(tmp = ft_strdup(env[i])) && ft_printf("minishell: %s: malloc failed\n", cmd))
 		return (NULL);
@@ -149,24 +150,39 @@ char	*add_end_slash(char *path)
 }
 
 /*
-** Removes . and .. from the path. For each .., removes also the directory before it.
+** Each time a double dot is removed + the part just before it, try to access
+** the path (cut at i position). Returns -1 if the path is incorrect.
 */
-char	*remove_dots(char *path)
+int		check_if_correc_path(char *tmp_path, int i)
+{
+	struct stat	info_file;
+	
+	i++;
+	if (!tmp_path) //malloc failed
+		return (FAILURE);
+	if (!i) //if i = 0 >> path is '/' so it's correct
+	{
+		free(tmp_path);
+		return (SUCCESS);
+	}
+	tmp_path[i] = '\0'; //trying new path just after we removed .. and the part before it
+	if (stat(tmp_path, &info_file) == -1) //incorrect path
+		return (-1);
+	free(tmp_path);
+	return (SUCCESS);
+}
+
+/*
+** Removes .. from the path. For each .., removes also the directory before it.
+** Checks each time it removes a double dot if the new path is correct. If not,
+** returns the incorrect path so stat / chdir will fail when trying to access it.
+*/
+char	*remove_double_dots(char *path)
 {
 	int		i;
+	int		correct_path;
 	int		prev_slash;
 
-	i = -1;
-	while (path[++i])
-	{
-		if (path[i] == '.' && path[i - 1] == '/' && (path[i + 1] == '\0' || path[i + 1] == '/'))	//remove '/.'
-		{
-			if (path[i + 1] == '\0' && !(path = add_end_slash(path))) //adds a '/' if /. is at the end of path
-				return (NULL);
-			ft_strlcpy(&path[i - 1], &path[i + 1], ft_strlen(&path[i + 1]) + 1);
-			i--;
-		}
-	}
 	i = -1;
 	while (path[++i])
 	{
@@ -178,6 +194,32 @@ char	*remove_dots(char *path)
 			prev_slash = find_prev_slash(path, i - 2); // if /tmp/../ > returns the position of '/' before tmp
 			ft_strlcpy(&path[prev_slash], &path[i + 2], ft_strlen(&path[i + 2]) + 1);
 			i = prev_slash - 1;
+			correct_path = check_if_correc_path(ft_strdup(path), i); //new
+			if (correct_path == FAILURE) //case malloc failed
+				return (NULL);
+			else if (correct_path == -1) //path incorrect, we returned it and chdir will fail
+				return (path);
+		}
+	}
+	return (path);
+}
+
+/*
+** Removes . from the path.
+*/
+char	*remove_simple_dot(char *path)
+{
+	int		i;
+
+	i = -1;
+	while (path[++i])
+	{
+		if (path[i] == '.' && path[i - 1] == '/' && (path[i + 1] == '\0' || path[i + 1] == '/'))	//remove '/.'
+		{
+			if (path[i + 1] == '\0' && !(path = add_end_slash(path))) //adds a '/' if /. is at the end of path
+				return (NULL);
+			ft_strlcpy(&path[i - 1], &path[i + 1], ft_strlen(&path[i + 1]) + 1);
+			i--;
 		}
 	}
 	return (path);
@@ -324,12 +366,13 @@ int		builtin_cd(char **args, char **env)
 	}
 	else if (!(path = treat_relative_path(args[1], env))) //we treat the argument for updating $PWD
 		return (FAILURE);
+	if (!remove_multiple_slash(path) && (!(path = remove_simple_dot(path))
+			|| !(path = remove_double_dots(path)))) //modifying path for updating $PWD
+		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
 	if (stat(path, &info_file) == -1) //checking if file's path / directory's path exists
 		return (error_no_file(args[1], env, path, "cd"));
 	if (chdir(path) == -1) //using path and not args[1] because cd can be use without argument
 		return (error_not_dir(args[1], env, path, "cd"));
-	if (!remove_multiple_slash(path) && !(path = remove_dots(path))) //modifying path for updating $PWD
-		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
 	if (update_env_pwd_oldpwd(path, env))
 		return (cd_error_need_free("minishell: cd: malloc failed\n", path));
 	free(global_path);
