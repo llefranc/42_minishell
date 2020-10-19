@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:23:44 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 11:46:15 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 14:30:07 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,14 @@ int		execution(t_token **tok, char ***env)
 	int		i;
 
 	i = -1;
-	while (tok[++i])
-	{
-		if (tok[i]->type == EXEC)
-			if (!find_builtin((char **)((tok[i])->ptr), env))
-				execve_part((char **)(tok[i]->ptr), *env);
-	}
+	(void)tok;
+	(void)env;
+	// while (tok[++i])
+	// {
+	// 	if (tok[i]->type == EXEC)
+	// 		if (!find_builtin((char **)((tok[i])->ptr), env))
+	// 			execve_part((char **)(tok[i]->ptr), *env);
+	// }
 	ft_printf("retour fonction = %d\n", global_ret_value);
 	return (SUCCESS);
 }

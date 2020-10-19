@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 11:41:19 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 17:48:02 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,26 +27,33 @@
 # define WRONG_FILE 126
 # define NOT_FOUND 127
 
+# define F_PIPE -10
+# define F_RIGHT -11
+# define F_LEFT -12
+
 # define INPUT 0
 # define OUTPUT 1
 # define OUTPUT_ADD 2
 # define PIPE 3
 # define EXEC 4
 
-typedef struct	s_token
+
+typedef struct			s_token
 {
-	int			type;
-	void		*ptr;
-}				t_token;
+	int					type;
+	char				**args;
+	struct s_token		*next;
+}						t_token;
 
 char			*global_path;
 int				global_ret_value;
-t_token			first_token;
+t_token			*first_token;
 
 
 //--------------------- UTILS ---------------------
 int		error_msg(char *msg, int return_value);
 void	*error_msg_ptr(char *msg, void *ptr);
+t_token	*create_list(char **cmd);
 
 //--------------------- BUILTINS ---------------------
 int		builtin_echo(char **args);

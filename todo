@@ -53,55 +53,64 @@ bash-3.2$ echo "\"salut$titi"
 
 >>> le premier token (la commande ou l'executable) semble ne pas tenir compte de la casse. ECHO <=> echo, ./A.OUT <=> ./a.out
 
-La structure sera de la forme :
-typedef struct s_cmd {
-	int type;
-	void *token;
-} t_cmd;
+>>> LISTE DES SEPARATEURS 
+# define F_PIPE -10
+# define F_RIGHT -11
+# define F_LEFT -12
 
->>> EXEMPLE :
+--------------------------- EXEMPLE COMMANDE SPLIT PAR CODEBRAI EN **CHAR ---------------------------
 
-echo -n > output_file < input_file >> output_file_append ; echo coucou | cat
+echo salut > test.txt coucouo \\| head | wc >> test2.txt < test3.txt
+echo
+salut
+-11
+test.txt
+coucouo
+\
+-10
+head
+-10
+wc
+-11
+-11
+test2.txt
+-12
+test3
 
-struct {										>>>>>>>> COMMANDE
-	type = 3
-	(void *) char **args = {"echo", "-n"}
+
+--------------------------- STRUCTURE POUR STOCKER CHAQUE COMMANDE ---------------------------
+
+typedef struct	s_token
+{
+	int			type;
+	char		**args;
+	t_token		*next;
+}				t_token;
+
+struct {										>>>>>>>> REDIRECTION INPUT
+	type = 0
+	char **args = {"input_file", NULL}
 }
 
 struct {										>>>>>>>> REDIRECTION OUTPUT
 	type = 1
-	(void *) char *file = output_file
-}
-
-struct {										>>>>>>>> REDIRECTION INPUT
-	type = 0
-	(void *) char *file = input_file
+	char **args = {"output_file", NULL}
 }
 
 struct {										>>>>>>>> REDIRECTION OUTPUT APPEND
 	type = 2
-	(void *) char *file = output_file_append
+	char **args = {"output_append_file", NULL}
 }
-
------------------------------------------------ >>>>>>>> ';' prochaine instruction, prochain double tableau 
-															 créé dans le prochain tour de boucle
 
 struct {										>>>>>>>> COMMANDE
 	type = 3
-	(void *) char **args = {"echo", "coucou"}
+	char **args = {"echo", "-n", "salut", NULL}
 }
 
 struct {										>>>>>>>> INDIQUE UN PIPE
 	type = 4
-	(void *) *ptr = NULL
+	char **args = {NULL}
 }
-
-struct {										>>>>>>>> COMMANDE
-	type = 3
-	(void *) char **args = {"cat"}
-}
-
-
 
 --------------------------------------------------------------
 LUCAS
