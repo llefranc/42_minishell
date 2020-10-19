@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/16 16:09:20 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 13:23:14 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ int		error_no_file(char *arg, char **env, char *path, char *cmd)
 	int		i;
 
 	i = 0;
-	arg ? ft_printf("minishell: %s: %s: No such file or directory\n", cmd, arg) : 0;
+	arg ? ft_fd_printf(STDERR_FILENO, "minishell: %s: %s: No such file or directory\n", cmd, arg) : 0;
 	if (!arg)
 	{
 		i = find_var_in_env("HOME", env);
-		ft_printf("minishell: %s: %s: No such file or directory\n", cmd, env[i] + 5);
+		ft_fd_printf(STDERR_FILENO, "minishell: %s: %s: No such file or directory\n", cmd, env[i] + 5);
 	}
 	free(path);
 	return (FAILURE);
@@ -54,11 +54,11 @@ int		error_not_dir(char *arg, char **env, char *path, char *cmd)
 	int		i;
 
 	i = 0;
-	arg ? ft_printf("minishell: %s: %s: Not a directory\n", cmd, arg) : 0;
+	arg ? ft_fd_printf(STDERR_FILENO, "minishell: %s: %s: Not a directory\n", cmd, arg) : 0;
 	if (!arg)
 	{
 		i = find_var_in_env("HOME", env);
-		ft_printf("minishell: %s: %s: Not a directory\n", cmd, env[i] + 5);
+		ft_fd_printf(STDERR_FILENO, "minishell: %s: %s: Not a directory\n", cmd, env[i] + 5);
 	}
 	free(path);
 	return (FAILURE);
@@ -69,7 +69,7 @@ int		error_not_dir(char *arg, char **env, char *path, char *cmd)
 */
 int		cd_error_need_free(char *str_error, char *path)
 {
-	ft_printf("%s", str_error);
+	ft_fd_printf(STDERR_FILENO, "%s", str_error);
 	free(path);
 	return (FAILURE);
 }
@@ -87,9 +87,9 @@ char	*copy_home_var(char **env, char *cmd)
 	i = find_var_in_env("HOME", env);
 	if ((!env[i] || (env[i] && ft_strncmp(env[i], "HOME=", 5)) ||				//HOME variable doesn't exist
 			(env[i] && !ft_strncmp(env[i], "HOME=", 5) && env[i][5] == '\0'))	//or HOME=""
-			&& ft_printf("minishell: %s: HOME not set\n", cmd))
+			&& ft_fd_printf(STDERR_FILENO, "minishell: %s: HOME not set\n", cmd))
 		return (NULL);
-	if (!(tmp = ft_strdup(env[i])) && ft_printf("minishell: %s: malloc failed\n", cmd))
+	if (!(tmp = ft_strdup(env[i])) && ft_fd_printf(STDERR_FILENO, "minishell: %s: malloc failed\n", cmd))
 		return (NULL);
 	ft_strlcpy(tmp, tmp + 5, ft_strlen(tmp + 5) + 1); //removing HOME=
 	return (tmp);
@@ -265,7 +265,7 @@ char	*treat_relative_path(char *arg, char **env)
 	{
 
 		if (!(path = ft_strdup(global_path)) || !(path = add_absolute_path_to_relative(path, arg)))
-			return (error_msg_ptr("minishell: cd: malloc failed\n", NULL));
+			return (error_msg_ptr("cd: malloc failed\n", NULL));
 	}
 	else if (arg[0] == '~')
 	{
@@ -278,10 +278,10 @@ char	*treat_relative_path(char *arg, char **env)
 		}
 		i = (arg[1] == '/' && path[1] != '\0') ? 1 : 0; //for cd ~/ with $HOME=/
 		if (!(path = add_absolute_path_to_relative(path, arg + i + 1))) //joins $HOME value and arg without tilde
-			return (error_msg_ptr("minishell: cd: malloc failed\n", NULL));
+			return (error_msg_ptr("cd: malloc failed\n", NULL));
 	}
 	else if (!(path = ft_strdup(arg))) //if absolute
-		return (error_msg_ptr("minishell: cd: malloc failed\n", NULL));
+		return (error_msg_ptr("cd: malloc failed\n", NULL));
 	return (path);
 }
 
@@ -356,9 +356,9 @@ int		builtin_cd(char **args, char **env)
 	struct stat	info_file;
 	
 	if (init_global_path(env))
-		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
+		return (error_msg("cd: malloc failed\n", FAILURE));
 	if (args && args[1] && args[1][0] == '-') //our cd doesn't handle options
-        return (error_msg("minishell: cd: no options are allowed\n", FAILURE));
+        return (error_msg("cd: no options are allowed\n", FAILURE));
 	if (args && !args[1]) //if no arg, cd use HOME environnement variable
 	{
 		if (!(path = copy_home_var(env, "cd")))
@@ -368,7 +368,7 @@ int		builtin_cd(char **args, char **env)
 		return (FAILURE);
 	if (!remove_multiple_slash(path) && (!(path = remove_simple_dot(path))
 			|| !(path = remove_double_dots(path)))) //modifying path for updating $PWD
-		return (error_msg("minishell: cd: malloc failed\n", FAILURE));
+		return (error_msg("cd: malloc failed\n", FAILURE));
 	if (stat(path, &info_file) == -1) //checking if file's path / directory's path exists
 		return (error_no_file(args[1], env, path, "cd"));
 	if (chdir(path) == -1) //using path and not args[1] because cd can be use without argument

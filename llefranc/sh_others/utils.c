@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:48 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/12 15:22:05 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 13:15:17 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 */
 int		error_msg(char *msg, int return_value)
 {
-	ft_printf("%s", msg);
+	ft_fd_printf(STDERR_FILENO, "minishell: %s", msg);
 	return (return_value);
 }
 
@@ -26,6 +26,6 @@ int		error_msg(char *msg, int return_value)
 */
 void	*error_msg_ptr(char *msg, void *ptr)
 {
-	ft_printf("%s", msg);
+	ft_fd_printf(STDERR_FILENO, "minishell: %s", msg);
 	return (ptr);
 }

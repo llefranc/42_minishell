@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:44:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/16 16:15:00 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 13:16:17 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,20 @@ int		execute_absolute_path(char **args, char **env)
 	ret_value = 0;
 	if (!pid) //child process
 	{
-		if (stat(args[0], &info_file) == -1 && ft_printf("minishell: exe: %s: No such file or directory\n", args[0]))
+		if (stat(args[0], &info_file) == -1 &&
+				ft_fd_printf(STDERR_FILENO, "minishell: exe: %s: No such file or directory\n", args[0]))
 			exit(NOT_FOUND); //checking if path exist
-		if (S_ISDIR(info_file.st_mode) && ft_printf("minishell: exe: %s: is a directory\n", args[0]))
+		if (S_ISDIR(info_file.st_mode) &&
+				ft_fd_printf(STDERR_FILENO, "minishell: exe: %s: is a directory\n", args[0]))
 			exit(WRONG_FILE); //checking if it's a directory or not
-		if (!(info_file.st_mode & S_IXUSR) && ft_printf("minishell: exe: %s: Permission denied\n", args[0]))
+		if (!(info_file.st_mode & S_IXUSR) &&
+				ft_fd_printf(STDERR_FILENO, "minishell: exe: %s: Permission denied\n", args[0]))
 			exit(WRONG_FILE);
 		if (execve(args[0], args, env))
-			exit(error_msg("minishell: exe: execve failed\n", NOT_FOUND));
+			exit(error_msg("exe: execve failed\n", NOT_FOUND));
 	}
 	else if (pid < 0) //a voir
-		return (error_msg("minishell: exe: fork failed\n", FAILURE));
+		return (error_msg("exe: fork failed\n", FAILURE));
 	else //parent process
 	{
 		waitpid(pid, &status, 0); //wait until process previously created exits
@@ -81,21 +84,21 @@ int		execute_path(char **args, char **env)
 		if (!(path = copy_home_var(env, "exe")))
 			return (FAILURE);
 		if (args[0][1] != '/' && args[0][1] != '\0' && there_is_a_slash(args[0]) && //case ~ without / (ex : ~Dir >> error)
-				ft_printf("minishell: exe: %s: No such file or directory\n", args[0]))
+				ft_fd_printf(STDERR_FILENO, "minishell: exe: %s: No such file or directory\n", args[0]))
 			i = NOT_FOUND;
 		else if (args[0][1] != '/' && args[0][1] != '\0' && env[find_var_in_env("PATH", env)]
 				&& (int)ft_strlen(env[find_var_in_env("PATH", env)]) > 5
-				&& ft_printf("minishell: exe: %s: command not found\n", args[0]))
+				&& ft_fd_printf(STDERR_FILENO, "minishell: exe: %s: command not found\n", args[0]))
 			i = NOT_FOUND;
 		else if (args[0][1] != '/' && args[0][1] != '\0'
-				&& ft_printf("minishell: exe: %s: No such file or directory\n", args[0]))
+				&& ft_fd_printf(STDERR_FILENO, "minishell: exe: %s: No such file or directory\n", args[0]))
 			i = NOT_FOUND;
 		i == NOT_FOUND ? free(path) : 0;
 		if (i == NOT_FOUND) //if error we exit the function
 			return (i);
 		i = (args[0][1] == '/' && path[1] != '\0') ? 1 : 0; //for execve ~/ with $HOME=/
 		if (!(path = add_absolute_path_to_relative(path, &args[0][0] + i + 1))) //joins $HOME value and arg without tilde
-			return (error_msg("minishell: exe: malloc failed\n", FAILURE));
+			return (error_msg("exe: malloc failed\n", FAILURE));
 		free(args[0]);
 		args[0] = path;
 	}
@@ -116,10 +119,10 @@ char	*get_path(char **path, char *arg, int *j)
 	while (path[++(*j)]) //testing each possible path
 	{
 		if (!(full_path = ft_strjoin(path[*j], "/")))
-			return (error_msg_ptr("minishell: exe: malloc failed\n", NULL));
+			return (error_msg_ptr("exe: malloc failed\n", NULL));
 		tmp = full_path;
 		if (!(full_path = ft_strjoin(full_path, arg)))
-			return (error_msg_ptr("minishell: exe: malloc failed\n", NULL));
+			return (error_msg_ptr("exe: malloc failed\n", NULL));
 		free(tmp);
 		if (!stat(full_path, &info_file)) //if stat == 0 the path is correct
 			return (full_path);
@@ -145,7 +148,7 @@ int		execute_with_path_variable(char **args, char **env)
 		j++;
 	env[i][j] != '=' ? j += 1 : 0; //we split after PATH=
 	if (!(path = ft_split(&env[i][j], ':')))
-		return (error_msg("minishell: exe: malloc failed\n", FAILURE));
+		return (error_msg("exe: malloc failed\n", FAILURE));
 	j = -1;
 	if ((full_path = get_path(path, args[0], &j))) //if one possibility of $PATH is working
 	{
@@ -154,7 +157,7 @@ int		execute_with_path_variable(char **args, char **env)
 		global_ret_value = execute_absolute_path(args, env);
 	}
 	else if (!path[j] &&
-			ft_printf("minishell: %s: command not found\n", args[0]))
+			ft_fd_printf(STDERR_FILENO, "minishell: %s: command not found\n", args[0]))
 		global_ret_value = NOT_FOUND;//full_path is NULL and j reached end of env >> no full_paths worked in get_path
 	else
 		global_ret_value = FAILURE; //case malloc failed

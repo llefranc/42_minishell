@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/13 13:49:44 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 13:25:55 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 */
 void	exit_with_msg(char *msg, unsigned char exit_value)
 {
-	ft_printf("%s", msg);
+	ft_fd_printf(STDOUT_FILENO, "%s", msg);
 	exit(exit_value);
 }
 
@@ -47,7 +47,10 @@ int		builtin_exit(char **args, char **env)
 
 	i = -1;
 	if (args && args[1] && args[2])
-		return (error_msg("exit\nminishell: exit: too many arguments\n", FAILURE));
+	{
+		ft_fd_printf(STDERR_FILENO, "exit\nminishell: exit: too many arguments\n");
+		return (FAILURE);
+	}
 	free(global_path);
 	free_split(env);
 	if (args && !args[1]) //case just exit without argument
@@ -60,10 +63,10 @@ int		builtin_exit(char **args, char **env)
 			|| (args[1][0] != '-' && ft_atoi(args[1]) < 0) //if args[1] > long max, it will produce an overflow
 			|| (args[1][0] == '-' && ft_atoi(args[1]) > 0))) //if args[1] < long min, it will produce an overflow
 	{
-		ft_printf("exit\nminishell: exit: %s: numeric argument required\n", args[1]);
+		ft_fd_printf(STDERR_FILENO, "exit\nminishell: exit: %s: numeric argument required\n", args[1]);
 		exit(255);
 	}
 	i = ft_atoi(args[1]);
-	ft_printf("exit\n"); //normal exit with exit code
+	ft_fd_printf(STDOUT_FILENO, "exit\n"); //normal exit with exit code
 	exit((unsigned char)i);
 }

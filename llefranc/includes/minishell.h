@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/15 17:14:30 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 11:41:19 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,15 @@
 # define PIPE 3
 # define EXEC 4
 
-char			*global_path;
-int				global_ret_value;
-
 typedef struct	s_token
 {
 	int			type;
 	void		*ptr;
 }				t_token;
+
+char			*global_path;
+int				global_ret_value;
+t_token			first_token;
 
 
 //--------------------- UTILS ---------------------

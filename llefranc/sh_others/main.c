@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/16 16:01:37 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 12:08:56 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,6 @@
 char	**copy_env(char **env, int add_quotes_bool);
 int		find_var_in_env(char *var, char **env);
 
-//echo >>> output
-//cd
-//pwd >>> output
-//export
-//unset
-//env >> output
-//exit
 //gerer le cas ou le cd est a la fin d'un pipe 
 
 //penser a ajouter fd_printf
@@ -50,8 +43,8 @@ int main(int ac, char *av[], char *env[])
 	char **cmd;
 	char **env_shell; //copy of env
 	t_token **tok;
-
 	(void)av;
+
 	if (!(env_shell = copy_env(env, 0)))
 		return (1);
 	if (ac != 1)
@@ -63,7 +56,7 @@ int main(int ac, char *av[], char *env[])
 	ft_printf("minishel$ ");
 	while (ret_gnl)
 	{
-		ret_gnl = get_next_line(1, &line);
+		ret_gnl = get_next_line(0, &line);
 		if (!line[0])
 		{
 			free(line);

@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/20 18:27:00 by llefranc          #+#    #+#             */
-/*   Updated: 2020/09/26 14:18:44 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/19 11:23:51 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ int					get_next_line(int fd, char **line);
 --------------------------------- FT_PRINTF -----------------------------------
 */
 int					ft_printf(const char *str, ...);
+int					ft_fd_printf(int fd, const char *str, ...);
 
 
 /*
