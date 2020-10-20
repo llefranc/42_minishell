@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:44:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 14:30:17 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 16:59:52 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,6 @@ int		execve_part(char **args, char **env)
 			&& args[0][0] != '~' && env[find_var_in_env("PATH", env)]
 			&& (int)ft_strlen(env[find_var_in_env("PATH", env)]) > 5
 			&& !there_is_a_slash(args[0]))
-		return (global_ret_value = execute_with_path_variable(args, env));
-	return (global_ret_value = execute_path(args, env));
+		return (execute_with_path_variable(args, env));
+	return (execute_path(args, env));
 }

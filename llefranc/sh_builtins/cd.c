@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 13:23:14 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 17:35:45 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,29 +322,6 @@ int		update_env_pwd_oldpwd(char *path, char **env)
 }
 
 /*
-** Allow to keep tracks of $PWD even if $PWD is unset. Needed for the case of
-** //tmp because getcwd function will return /tmp, it's the only way to save //.
-*/
-int		init_global_path(char **env)
-{
-	int		i;
-
-	i = 0;
-	if (!global_path) //if global_path == NULL, first launch of cd, global_path need to be initialize
-	{
-		i = find_var_in_env("PWD", env);
-		if (!env[i]) //if $PWD is unset
-		{
-			if (!(global_path = getcwd(NULL, 0)))
-				return (FAILURE);
-		}
-		else if (!(global_path = ft_strdup(&env[i][4]))) //starting after PWD=
-			return (FAILURE);
-	}
-	return (SUCCESS);
-}
-
-/*
 ** If no arguments, changes the working directory to $HOME if it exists.
 ** Otherwise changes the working directory using first argument (and ignoring
 ** the other ones). Handles absolute path, relative path (also with ~).
@@ -355,8 +332,6 @@ int		builtin_cd(char **args, char **env)
 	char	*path;		//path will be send to chdir func
 	struct stat	info_file;
 	
-	if (init_global_path(env))
-		return (error_msg("cd: malloc failed\n", FAILURE));
 	if (args && args[1] && args[1][0] == '-') //our cd doesn't handle options
         return (error_msg("cd: no options are allowed\n", FAILURE));
 	if (args && !args[1]) //if no arg, cd use HOME environnement variable

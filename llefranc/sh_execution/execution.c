@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:23:44 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 16:44:31 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 17:03:47 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ int		find_builtin(char **args, char ***env)
 	return (ret);
 }
 
+// int		do_pipe(void)
+
 int		execution(t_token *token, char ***env)
 {
 	int		i;
@@ -44,19 +46,20 @@ int		execution(t_token *token, char ***env)
 	while (tmp)
 	{
 		if (tmp->type == INPUT || tmp->type == OUTPUT || tmp->type == OUTPUT_ADD)
-			if (redirection(tmp->type, (tmp->args)[0]) == FAILURE)
+			if (do_redirection(tmp->type, (tmp->args)[0]))
 				return (global_ret_value = FAILURE);
 		tmp = tmp->next;
 	}
-	while (token)
+	tmp = token;
+	while (tmp)
 	{
-		if (token->type == EXEC)
-			if (!find_builtin(token->args, env))
-				execve_part(token->args, *env);
-		token = token->next;
+		if (tmp->type == EXEC) //there is only one token EXEC between pipes / semicolons
+			if (!find_builtin(tmp->args, env))
+				execve_part(tmp->args, *env);
+		tmp = tmp->next;
 	}
 	dup2(save_stdin, STDIN_FILENO);		//restore back stdin and stdout
 	dup2(save_stdout, STDOUT_FILENO);
-	ft_printf("retour fonction = %d\n", global_ret_value);
+	// ft_printf("retour fonction = %d\n", global_ret_value);
 	return (SUCCESS);
 }

@@ -6,13 +6,18 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/20 15:21:55 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 16:29:58 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 17:02:42 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int		redirection(int type, char *file)
+/*
+** Opens the file and changes STDIN with the new fd value if type == INPUT
+** or changes STDOUT with new fd value if type == OUTPUT || OUTPUT_ADD.
+** Returns FAILURE if open failed.
+*/
+int		do_redirection(int type, char *file)
 {
 	int	new_fd;
 

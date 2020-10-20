@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 15:59:11 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 17:16:30 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,11 @@ t_token			*first_token;
 //--------------------- UTILS ---------------------
 int		error_msg(char *msg, int return_value);
 void	*error_msg_ptr(char *msg, void *ptr);
+int		init_global_path(char **env);
+int		init_global_home(char **env);
 t_token	*create_token_list(char **cmd);
 void	free_token_list(t_token *token);
+
 
 //--------------------- BUILTINS ---------------------
 int		builtin_echo(char **args);
@@ -73,6 +76,6 @@ int		builtin_exit(char **args, char **env);
 int		execve_part(char **args, char **env);
 
 int		execution(t_token *tok, char ***env);
-int		redirection(int type, char *file);
+int		do_redirection(int type, char *file);
 
 #endif

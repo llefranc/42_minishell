@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 16:31:51 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 17:27:04 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int		find_var_in_env(char *var, char **env);
 //mettre le home en variable globale pour cd
 //checker le cas de pwd dans un fichier efface si j'unset pwd
 //penser a bien chercker que tout est free
+//checker le cas de ls=ls
 
 //penser a mettre en variable globale le retour des fonctions et le ptr qui tient le tab de structs
 
@@ -98,19 +99,26 @@ int main(int ac, char *av[], char *env[])
 	char *line = NULL;
 	char **cmd;
 	char **env_shell; //copy of env
-	// t_token **tok;
 	(void)av;
 
 	if (!(env_shell = copy_env(env, 0)))
-		return (1);
+		return (error_msg("main: malloc failed\n", FAILURE));
 	if (ac != 1)
 	{
 		ft_printf("just launch minishell exe, without any argument\n");
 		exit(EXIT_FAILURE);
 	}
-	// PARSEUR QUI DOIT RENVOYER UN DOUBLE TABLEAU DE CHAR (**ARGV) TERMINE PAR NULL
 	save_stdin = dup(STDIN_FILENO);
 	save_stdout = dup(STDOUT_FILENO);
+	if (init_global_path(env_shell) || init_global_home(env_shell))
+	{
+		free_split(env_shell);
+		free(global_home);
+		free(global_path);
+		return (error_msg("main: malloc failed\n", FAILURE));
+	}
+
+	// PARSEUR QUI DOIT RENVOYER UN DOUBLE TABLEAU DE CHAR (**ARGV) TERMINE PAR NULL
 	ft_printf("minishel$ ");
 	while (ret_gnl)
 	{
@@ -128,11 +136,11 @@ int main(int ac, char *av[], char *env[])
 		// ft_printf("\n\n-----------------\n\n");
 		// print_list(first_token);						//print la liste chainee
 		first_token = create_token_list(cmd);
+		free(line);
+		free_split(cmd);
 		if (execution(first_token, &env_shell))
 			ft_printf("sortie de exec_part sans aucune commande lancee\n");
 		free_token_list(first_token);
-		free(line);
-		free_split(cmd);
 		line = NULL;
 		cmd = NULL;
 		ft_printf("minishel$ ");

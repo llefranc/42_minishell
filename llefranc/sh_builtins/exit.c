@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 15:51:26 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 17:35:12 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 void	exit_with_msg(char *msg, unsigned char exit_value)
 {
 	ft_fd_printf(STDOUT_FILENO, "%s", msg);
+	free_token_list(first_token);
 	exit(exit_value);
 }
 
@@ -39,7 +40,8 @@ int		string_is_num(char *str)
 ** If more than 2 arguments, returns FAILURE and doesn't exit. If no argument,
 ** exits with SUCCESS. If argument is not numeric or bigger than a long, exits
 ** with 255 as exit code. Otherwise exits with argument cast in unsigned char
-** as exit code. Frees all the *ptr previously allocated.
+** as exit code. Frees all the *ptr previously allocated ands restores the fd
+** for STDIN / STDOUT.
 */
 int		builtin_exit(char **args, char **env)
 {
@@ -52,8 +54,10 @@ int		builtin_exit(char **args, char **env)
 		return (FAILURE);
 	}
 	free(global_path);
+	free(global_home);
 	free_split(env);
-	free_token_list(first_token);
+	dup2(save_stdin, STDIN_FILENO); //restore back stdin and stdout
+	dup2(save_stdout, STDOUT_FILENO);
 	if (args && !args[1]) //case just exit without argument
 		exit_with_msg("exit\n", SUCCESS);
 	else if (i == SUCCESS)
@@ -65,9 +69,11 @@ int		builtin_exit(char **args, char **env)
 			|| (args[1][0] == '-' && ft_atoi(args[1]) > 0))) //if args[1] < long min, it will produce an overflow
 	{
 		ft_fd_printf(STDERR_FILENO, "exit\nminishell: exit: %s: numeric argument required\n", args[1]);
+		free_token_list(first_token); //needs to be free after last use of **args
 		exit(255);
 	}
 	i = ft_atoi(args[1]);
 	ft_fd_printf(STDOUT_FILENO, "exit\n"); //normal exit with exit code
+	free_token_list(first_token);
 	exit((unsigned char)i);
 }
