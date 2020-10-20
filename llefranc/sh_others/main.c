@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 17:59:14 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 12:25:01 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,17 @@
 
 char	**copy_env(char **env, int add_quotes_bool);
 int		find_var_in_env(char *var, char **env);
+void	print_list(t_token *first);
 
 //gerer le cas ou le cd est a la fin d'un pipe 
+//mettre le home en variable globale pour cd
+//checker le cas de pwd dans un fichier efface si j'unset pwd
 
-//penser a ajouter fd_printf
 //penser a mettre en variable globale le retour des fonctions et le ptr qui tient le tab de structs
-// echo ok > text.txt salut
-
-// t_token		**create_token_array(char **args, int size)
-// {
-// 	t_token **tok;
-// 	int		i = -1;
-
-// 	tok = malloc(sizeof(*tok) * (size + 1));
-// 	tok[size] = NULL;
-// 	while (++i < size)
-// 		tok[i] = malloc(sizeof(**tok));
-// 	tok[0]->ptr = args;
-// 	tok[0]->type = EXEC;
-// 	return (tok);
-// }
 
 // FONCTION TEST
 // echo salut > test coucouo \\ | head | wc > > test2 < test3
+// echo ok > text.txt salut
 
 // fd = dup(1)
 
@@ -79,7 +67,6 @@ void	imite_fonction_corentin(char **cmd)
 	}
 }
 
-void	print_list(t_token *first);
 
 
 int main(int ac, char *av[], char *env[])

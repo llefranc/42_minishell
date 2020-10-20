@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:48 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 18:11:01 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 12:23:15 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,39 +29,6 @@ void	*error_msg_ptr(char *msg, void *ptr)
 	ft_fd_printf(STDERR_FILENO, "minishell: %s", msg);
 	return (ptr);
 }
-
-// void	put_redirection_in_first(char **cmd, int i, int flag)
-// {
-// 	int		tmp;
-
-// 	tmp = i - 1;
-// 	if (flag == INPUT)
-// 	{
-// 		while (tmp >= 0 && cmd[tmp] != F_PIPE && cmd[tmp] != F_LEFT && cmd[tmp] != F_RIGHT)
-// 			tmp--;
-// 		if ()
-// 	}
-// }
-
-// char	**sort_cmd_array(char **cmd)
-// {
-// 	int		i;
-// 	int		j;
-
-// 	i = 0;
-// 	j = 0;
-// 	while (cmd[i])
-// 	{
-// 		if (cmd[i][0] == F_PIPE) //'|'
-// 			j = i + 1;
-// 		else if (cmd[i][0] == F_LEFT) //'<'
-// 		{
-// 			cmd[i + 1]
-// 		}
-// 		i++;
-// 	}
-// 	return (cmd);
-// }
 
 /*
 ** Takes a **char cmd to add a new argument to the command. Returns a new
@@ -169,8 +136,6 @@ t_token	*create_list(char **cmd)
 	t_token *token;
 	t_token	*tmp;
 	
-	// first_token = token;
-
 	if (!cmd)
 		return (NULL);
 	i = -1;
@@ -187,6 +152,9 @@ t_token	*create_list(char **cmd)
 		{
 			if (cmd[i][0] != F_PIPE && cmd[i][0] != F_LEFT && cmd[i][0] != F_RIGHT) //si c'est un arg d'une commande
 			{
+				if (token->type == PIPE) //si on est sur un pipe, on se positionne au bout de la chaine pour creer le new
+					while (token->next)  //token arg (car on a peut etre deja ajoute avec lst_addback des tokens redirections)
+						token = token->next;
 				if (token->type != EXEC) //si on est pas sur un token commande
 				{
 					if (!(token->next = create_new_token(cmd, &i))) //on cree new token avec la ligne arg
@@ -198,6 +166,8 @@ t_token	*create_list(char **cmd)
 			}
 			else if (cmd[i][0] == F_PIPE) //si on arrive sur une ligne pipe dans cmd
 			{
+				while (token->next) //le token pipe se trouvera toujours a la fin de la liste chainee actuelle
+					token = token->next;
 				if (!(token->next = create_new_token(cmd, &i))) //on cree un new token pipe
 					return (NULL);
 				token = token->next; //on se place sur le new token pipe >> si c'est un arg, il va du coup creer un new token
@@ -206,7 +176,7 @@ t_token	*create_list(char **cmd)
 			{
 				if (!(tmp = create_new_token(cmd, &i)))
 					return (NULL);
-				ft_lstadd_back(&first_token, tmp); //PENSER A BIEN TESTER LES REDIRECTIONS DANS PLUSIEURS ORDRES DIFFERENTS
+				ft_lstadd_back(&first_token, tmp);
 			}
 		}
 	}
@@ -217,11 +187,16 @@ void	print_list(t_token *first)
 {
 	while (first)
 	{
-		ft_printf("type = %d\n", first->type);
+		first->type == PIPE ? ft_printf("PIPE (%d)\n", first->type) : 0;
+		first->type == EXEC ? ft_printf("EXEC (%d)\n", first->type) : 0;
+		first->type == INPUT ? ft_printf("INPUT (%d)\n", first->type) : 0;
+		first->type == OUTPUT ? ft_printf("OUTPUT (%d)\n", first->type) : 0;
+		first->type == OUTPUT_ADD ? ft_printf("OUTPUT_ADD (%d)\n", first->type) : 0;
+		
 		if (first->type == OUTPUT_ADD || first->type == OUTPUT || first->type == INPUT)
 			ft_printf("file = %s\n", (first->args)[0]);
 		else if (first->type == PIPE)
-			ft_printf("PIPE\n");
+			ft_printf("NULL\n");
 		else
 		{
 			int 	i = -1;

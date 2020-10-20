@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 17:48:02 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 12:22:22 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct			s_token
 }						t_token;
 
 char			*global_path;
+char			*global_home;
 int				global_ret_value;
 t_token			*first_token;
 
