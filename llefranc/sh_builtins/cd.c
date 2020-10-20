@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 17:35:45 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 17:46:41 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,7 +269,14 @@ char	*treat_relative_path(char *arg, char **env)
 	}
 	else if (arg[0] == '~')
 	{
-		if (!(path = copy_home_var(env, "cd"))) //path = $HOME
+		i = find_var_in_env("HOME", env);
+		if (env[i]) //updating global_home variable if $HOME exists in environnement
+		{
+			free(global_home);
+			if (!(global_home = ft_strdup(&env[i][5]))) //starting after HOME=
+				return (NULL);
+		}
+		if (!(path = ft_strdup(global_home)))
 			return (NULL);
 		if (arg[1] != '/' && arg[1] != '\0') //case ~ without / (ex : ~Dir >> error)
 		{
