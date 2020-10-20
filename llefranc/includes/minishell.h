@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 12:22:22 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 15:59:11 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,11 @@ typedef struct			s_token
 	struct s_token		*next;
 }						t_token;
 
+
+int				save_stdin;
+int				save_stdout;
 char			*global_path;
-char			*global_home;
+char			*global_home; //A FAIRE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 int				global_ret_value;
 t_token			*first_token;
 
@@ -54,7 +57,8 @@ t_token			*first_token;
 //--------------------- UTILS ---------------------
 int		error_msg(char *msg, int return_value);
 void	*error_msg_ptr(char *msg, void *ptr);
-t_token	*create_list(char **cmd);
+t_token	*create_token_list(char **cmd);
+void	free_token_list(t_token *token);
 
 //--------------------- BUILTINS ---------------------
 int		builtin_echo(char **args);
@@ -68,6 +72,7 @@ int		builtin_exit(char **args, char **env);
 //--------------------- EXECUTION ---------------------
 int		execve_part(char **args, char **env);
 
-int		execution(t_token **tok, char ***env);
+int		execution(t_token *tok, char ***env);
+int		redirection(int type, char *file);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 13:25:55 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 15:51:26 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int		builtin_exit(char **args, char **env)
 	}
 	free(global_path);
 	free_split(env);
+	free_token_list(first_token);
 	if (args && !args[1]) //case just exit without argument
 		exit_with_msg("exit\n", SUCCESS);
 	else if (i == SUCCESS)

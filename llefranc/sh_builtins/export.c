@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:51 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 13:26:24 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 12:57:38 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,7 +306,7 @@ int     builtin_export(char **args, char ***env)
     while (args[++i]) //first i is 1, cause args[0] is export cmd
     {
 		if (check_name_var(args[i]))	//if name of variable isn't correct >> we don't export
-		{								// and we set return value to error code FAILURE
+		{								//and we set return value to error code FAILURE
 			ret_value = FAILURE;
 			ft_fd_printf(STDERR_FILENO, "minishell: export: `%s': not a valid identifier\n", args[i]);
 		}

@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:23:44 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 14:30:07 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 16:44:31 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,29 @@ int		find_builtin(char **args, char ***env)
 	return (ret);
 }
 
-int		execution(t_token **tok, char ***env)
+int		execution(t_token *token, char ***env)
 {
 	int		i;
+	t_token	*tmp;
 
 	i = -1;
-	(void)tok;
-	(void)env;
-	// while (tok[++i])
-	// {
-	// 	if (tok[i]->type == EXEC)
-	// 		if (!find_builtin((char **)((tok[i])->ptr), env))
-	// 			execve_part((char **)(tok[i]->ptr), *env);
-	// }
+	tmp = token;
+	while (tmp)
+	{
+		if (tmp->type == INPUT || tmp->type == OUTPUT || tmp->type == OUTPUT_ADD)
+			if (redirection(tmp->type, (tmp->args)[0]) == FAILURE)
+				return (global_ret_value = FAILURE);
+		tmp = tmp->next;
+	}
+	while (token)
+	{
+		if (token->type == EXEC)
+			if (!find_builtin(token->args, env))
+				execve_part(token->args, *env);
+		token = token->next;
+	}
+	dup2(save_stdin, STDIN_FILENO);		//restore back stdin and stdout
+	dup2(save_stdout, STDOUT_FILENO);
 	ft_printf("retour fonction = %d\n", global_ret_value);
 	return (SUCCESS);
 }

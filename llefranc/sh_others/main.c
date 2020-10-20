@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 12:25:01 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 16:31:51 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,18 @@
 
 char	**copy_env(char **env, int add_quotes_bool);
 int		find_var_in_env(char *var, char **env);
-void	print_list(t_token *first);
 
 //gerer le cas ou le cd est a la fin d'un pipe 
 //mettre le home en variable globale pour cd
 //checker le cas de pwd dans un fichier efface si j'unset pwd
+//penser a bien chercker que tout est free
 
 //penser a mettre en variable globale le retour des fonctions et le ptr qui tient le tab de structs
 
 // FONCTION TEST
 // echo salut > test coucouo \\ | head | wc > > test2 < test3
 // echo ok > text.txt salut
-
+// echo salut > test coucouo \\ | head | wc > > test2 < test3 > test6 > test7 > > test8 < test9 salut ok hello > test10 | bonjour ok | < lol > mdr programme
 // fd = dup(1)
 
 // head test.txt | wc | cat
@@ -67,7 +67,30 @@ void	imite_fonction_corentin(char **cmd)
 	}
 }
 
-
+void	print_list(t_token *first)
+{
+	while (first)
+	{
+		first->type == PIPE ? ft_printf("PIPE (%d)\n", first->type) : 0;
+		first->type == EXEC ? ft_printf("EXEC (%d)\n", first->type) : 0;
+		first->type == INPUT ? ft_printf("INPUT (%d)\n", first->type) : 0;
+		first->type == OUTPUT ? ft_printf("OUTPUT (%d)\n", first->type) : 0;
+		first->type == OUTPUT_ADD ? ft_printf("OUTPUT_ADD (%d)\n", first->type) : 0;
+		
+		if (first->type == OUTPUT_ADD || first->type == OUTPUT || first->type == INPUT)
+			ft_printf("file = %s\n", (first->args)[0]);
+		else if (first->type == PIPE)
+			ft_printf("NULL\n");
+		else
+		{
+			int 	i = -1;
+			while ((first->args)[++i])
+				ft_printf("%s ", (first->args)[i]);
+			ft_printf("\n");
+		}
+		first = first->next;
+	}
+}
 
 int main(int ac, char *av[], char *env[])
 {
@@ -86,6 +109,8 @@ int main(int ac, char *av[], char *env[])
 		exit(EXIT_FAILURE);
 	}
 	// PARSEUR QUI DOIT RENVOYER UN DOUBLE TABLEAU DE CHAR (**ARGV) TERMINE PAR NULL
+	save_stdin = dup(STDIN_FILENO);
+	save_stdout = dup(STDOUT_FILENO);
 	ft_printf("minishel$ ");
 	while (ret_gnl)
 	{
@@ -97,25 +122,20 @@ int main(int ac, char *av[], char *env[])
 		}
 		cmd = ft_split(line, ' ');
 		imite_fonction_corentin(cmd);
-		int i = -1;
-		while (cmd[++i])
-			ft_printf("%s\n", cmd[i]);
-		ft_printf("\n\n-----------------\n\n");
-		first_token = create_list(cmd);
-		print_list(first_token);
-		// tok = create_token_array(cmd, 1);
-		// if (execution(tok, &env_shell))
-		// 	ft_printf("sortie de exec_part sans aucune commande lancee\n");
-		// system("leaks a.out");
-		// ft_printf("ret_func = %d\n>>> ", ret_func);
-		// ft_printf("minishel$ ");
-		// free(line);
-		// free_split(cmd);
-		// free(tok[1]);
-		// free(tok[0]);
-		// free(tok);
-		// line = NULL;
-		// cmd = NULL;
+		// int i = -1;
+		// while (cmd[++i])								//print le split de corentin
+		// 	ft_printf("%s\n", cmd[i]);
+		// ft_printf("\n\n-----------------\n\n");
+		// print_list(first_token);						//print la liste chainee
+		first_token = create_token_list(cmd);
+		if (execution(first_token, &env_shell))
+			ft_printf("sortie de exec_part sans aucune commande lancee\n");
+		free_token_list(first_token);
+		free(line);
+		free_split(cmd);
+		line = NULL;
+		cmd = NULL;
+		ft_printf("minishel$ ");
 	}
 	return (0);
 }

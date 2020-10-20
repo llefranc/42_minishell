@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 17:42:10 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 13:26:56 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/20 12:58:57 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int     builtin_unset(char **args, char ***env)
     while (args[++i]) //first i is 1, cause args[0] is unset cmd
     {
 		if (check_name_var_unset(args[i]))	//if name of variable isn't correct >> we don't unset
-		{									// and we set return value to error code (1)
+		{									//and we set return value to error code (1)
 			ret_value = FAILURE;
 			ft_fd_printf(STDERR_FILENO, "minishell: unset: `%s': not a valid identifier\n", args[i]);
 		}
