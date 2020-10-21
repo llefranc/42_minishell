@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/21 15:16:35 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/21 17:24:26 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,42 +16,15 @@
 char	**copy_env(char **env, int add_quotes_bool);
 int		find_var_in_env(char *var, char **env);
 
-//gerer le cas ou le cd est a la fin d'un pipe 
-//mettre le home en variable globale pour cd
-//checker le cas de pwd dans un fichier efface si j'unset pwd
 //penser a bien chercker que tout est free
 //checker le cas de ls=ls
-
-//penser a mettre en variable globale le retour des fonctions et le ptr qui tient le tab de structs
 
 // FONCTION TEST
 // echo salut > test coucouo \\ | head | wc > > test2 < test3
 // echo ok > text.txt salut
 // echo salut > test coucouo \\ | head | wc > > test2 < test3 > test6 > test7 > > test8 < test9 salut ok hello > test10 | bonjour ok | < lol > mdr programme
-// fd = dup(1)
 
 // head test.txt | wc | cat
-
-// fd[2]       >> fd[1] >> fd[0]
-// pipe(fd);
-// fork()
-
-
-//         HEAD            |           WC              
-//           close(fd[0])  |      close(fd[1])             
-//                         |                           
-//   dup2(1, fd[1])        |       dup2(0, fd[0])
-//                         |                           
-//                         |       dup2(1, SAUVEGARDE_STDOUT)         
-//                         |       dup2(0, SAUVEGARDE_STDIN) 
-//                         |                           
-//                         |                           
-//                         |                           
-//                         |                           
-//                         |                           
-//                         |                           
-//                         |                           
-//                         |       
 
 void	imite_fonction_corentin(char **cmd)
 {
@@ -139,13 +112,11 @@ int main(int ac, char *av[], char *env[])
 		free(line);
 		free_split(cmd);
 		do_pipe(first_token, &env_shell);
-		// if (execution(first_token, &env_shell))
-		// 	ft_printf("sortie de exec_part sans aucune commande lancee\n");
 		free_token_list(first_token);
 		line = NULL;
 		cmd = NULL;
 		// ft_printf("ret fonction : %d\n", global_ret_value);
-		system("leaks a.out");
+		// system("leaks a.out");
 		ft_printf("minishel$ ");
 	}
 	return (0);

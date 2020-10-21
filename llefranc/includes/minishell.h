@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/21 11:57:16 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/21 17:24:12 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@
 # define PIPE 3
 # define EXEC 4
 
-
 typedef struct			s_token
 {
 	int					type;
@@ -45,23 +44,12 @@ typedef struct			s_token
 	struct s_token		*next;
 }						t_token;
 
-
 int				save_stdin;
 int				save_stdout;
 char			*global_path;
-char			*global_home; //A FAIRE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+char			*global_home;
 int				global_ret_value;
 t_token			*first_token;
-
-
-//--------------------- UTILS ---------------------
-int		error_msg(char *msg, int return_value);
-void	*error_msg_ptr(char *msg, void *ptr);
-int		init_global_path(char **env);
-int		init_global_home(char **env);
-t_token	*create_token_list(char **cmd);
-void	free_token_list(t_token *token);
-
 
 //--------------------- BUILTINS ---------------------
 int		builtin_echo(char **args);
@@ -74,10 +62,16 @@ int		builtin_exit(char **args, char **env);
 
 //--------------------- EXECUTION ---------------------
 int		execve_part(char **args, char **env);
-
 int		execution(t_token *tok, char ***env);
 int		do_redirection(int type, char *file);
 int		do_pipe(t_token *token, char ***env);
 
+//--------------------- UTILS ---------------------
+int		error_msg(char *msg, int return_value);
+void	*error_msg_ptr(char *msg, void *ptr);
+int		init_global_path(char **env);
+int		init_global_home(char **env);
+t_token	*create_token_list(char **cmd);
+void	free_token_list(t_token *token);
 
 #endif
