@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 17:35:12 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/21 15:12:59 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int		builtin_exit(char **args, char **env)
 	free(global_path);
 	free(global_home);
 	free_split(env);
-	dup2(save_stdin, STDIN_FILENO); //restore back stdin and stdout
-	dup2(save_stdout, STDOUT_FILENO);
+	// dup2(save_stdin, STDIN_FILENO); //restore back stdin and stdout
+	// dup2(save_stdout, STDOUT_FILENO);
 	if (args && !args[1]) //case just exit without argument
 		exit_with_msg("exit\n", SUCCESS);
 	else if (i == SUCCESS)

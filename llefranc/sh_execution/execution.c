@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:23:44 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 17:03:47 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/21 15:14:38 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,15 @@ int		find_builtin(char **args, char ***env)
 	return (ret);
 }
 
-// int		do_pipe(void)
 
 int		execution(t_token *token, char ***env)
 {
-	int		i;
 	t_token	*tmp;
 
-	i = -1;
 	tmp = token;
-	while (tmp)
+	if (tmp)
+		// ft_fd_printf(STDERR_FILENO, "tmp type = %d et tmp->content = %s\n", tmp->type, (tmp->args)[0]);
+	while (tmp && tmp->type != PIPE)
 	{
 		if (tmp->type == INPUT || tmp->type == OUTPUT || tmp->type == OUTPUT_ADD)
 			if (do_redirection(tmp->type, (tmp->args)[0]))
@@ -51,15 +50,97 @@ int		execution(t_token *token, char ***env)
 		tmp = tmp->next;
 	}
 	tmp = token;
-	while (tmp)
+	if (tmp)
+		// ft_fd_printf(STDERR_FILENO, "tmp type = %d et tmp->content = %s\n", tmp->type, (tmp->args)[0]);
+	while (tmp && tmp->type != PIPE)
 	{
 		if (tmp->type == EXEC) //there is only one token EXEC between pipes / semicolons
+		{
+			// ft_fd_printf(STDERR_FILENO, "on exec ce token tmp type = %d et tmp->content = %s\n", tmp->type, (tmp->args)[0]);
 			if (!find_builtin(tmp->args, env))
 				execve_part(tmp->args, *env);
+		}
+		// if (tmp)
+		// 	ft_fd_printf(STDERR_FILENO, "tmptype = %d\n", tmp->type);
 		tmp = tmp->next;
 	}
 	dup2(save_stdin, STDIN_FILENO);		//restore back stdin and stdout
 	dup2(save_stdout, STDOUT_FILENO);
-	// ft_printf("retour fonction = %d\n", global_ret_value);
+	// ft_fd_printf(STDERR_FILENO, "retour fonction = %d\n", global_ret_value);
+	return (SUCCESS);
+}
+// tok        tmp
+// |          |
+// echo salut | wc
+// echo salut
+
+int		is_it_last_instruction(t_token *token)
+{
+	while (token && token->type != PIPE) //on cherche le prochain pipe
+		token = token->next;
+	if (!token)
+		return (1);
+	else
+		return (0);
+}
+
+int		pipe_exec_son(t_token *token, char ***env, int fdpipe[2])
+{
+	close(fdpipe[0]);
+	dup2(fdpipe[1], STDOUT_FILENO);
+	execution(token, env);
+	close(fdpipe[1]);
+	exit(SUCCESS);
+}
+
+int		do_pipe(t_token *token, char ***env)
+{
+	t_token		*tmp;
+	pid_t		pid;
+	int			fdpipe[2];
+	int			fd_in;
+	int			status;
+
+	fd_in = STDIN_FILENO;
+	tmp = token;
+	while (tmp && tmp->type != PIPE)
+		tmp = tmp->next;
+	if (!tmp)
+		execution(token, env);
+	else
+	{
+		while (token)
+		{
+			pipe(fdpipe);
+			pid = fork();
+			if (pid == -1)
+				return (global_ret_value = error_msg("pipe: fork failed\n", FAILURE));
+			else if (!pid)
+			{
+				close(fdpipe[0]);
+				dup2(fd_in, STDIN_FILENO); //on met le dernier fdin sauvegarde
+				if (tmp) //si il reste une commande
+					dup2(fdpipe[1], STDOUT_FILENO);
+				execution(token, env);
+				close(fd_in);
+				close(fdpipe[1]);
+				exit(SUCCESS);
+			}
+			else
+			{
+				close(fdpipe[1]);
+				waitpid(pid, &status, 0);
+				fd_in = fdpipe[0];
+				while (token && token->type != PIPE)
+					token = token->next;
+				if (token && token->type == PIPE)
+					token = token->next;
+				tmp = token; //pour savoir si il reste une prochaine commande a executer
+				while (tmp && tmp->type != PIPE)
+					tmp = tmp->next;
+			}
+		}
+	}
+	global_ret_value = WEXITSTATUS(status);
 	return (SUCCESS);
 }

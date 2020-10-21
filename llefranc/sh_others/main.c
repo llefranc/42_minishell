@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 17:47:08 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/21 15:16:35 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,16 +133,18 @@ int main(int ac, char *av[], char *env[])
 		// int i = -1;
 		// while (cmd[++i])								//print le split de corentin
 		// 	ft_printf("%s\n", cmd[i]);
-		// ft_printf("\n\n-----------------\n\n");
-		// print_list(first_token);						//print la liste chainee
 		first_token = create_token_list(cmd);
+		// print_list(first_token);						//print la liste chainee
+		// ft_printf("\n\n-----------------\n\n");
 		free(line);
 		free_split(cmd);
-		if (execution(first_token, &env_shell))
-			ft_printf("sortie de exec_part sans aucune commande lancee\n");
+		do_pipe(first_token, &env_shell);
+		// if (execution(first_token, &env_shell))
+		// 	ft_printf("sortie de exec_part sans aucune commande lancee\n");
 		free_token_list(first_token);
 		line = NULL;
 		cmd = NULL;
+		// ft_printf("ret fonction : %d\n", global_ret_value);
 		system("leaks a.out");
 		ft_printf("minishel$ ");
 	}

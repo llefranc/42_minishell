@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 17:16:30 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/21 11:57:16 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,7 @@ int		execve_part(char **args, char **env);
 
 int		execution(t_token *tok, char ***env);
 int		do_redirection(int type, char *file);
+int		do_pipe(t_token *token, char ***env);
+
 
 #endif
