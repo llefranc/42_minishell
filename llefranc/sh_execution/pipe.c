@@ -61,6 +61,7 @@ int		do_pipe(t_token *token, char ***env)
 	int			status;
                           //for the first execution of the pipe, the left part
 	fd_in = STDIN_FILENO; //doesn't take any input
+	status = 0;
 	tmp = token;
 	while (tmp && tmp->type != PIPE)
 		tmp = tmp->next;
@@ -84,7 +85,7 @@ int		do_pipe(t_token *token, char ***env)
 			}                      //iteration inside son function
 			move_to_next_pipe(&token, &tmp);
 		}
+		global_ret_value = WEXITSTATUS(status); //exit code of last command executed
 	}
-	global_ret_value = WEXITSTATUS(status); //exit code of last command executed
 	return (SUCCESS);
 }

@@ -86,6 +86,7 @@ int		execution(t_token *token, char ***env)
 			if (!find_builtin(tmp->args, env))
 				execve_part(tmp->args, *env);
 		tmp = tmp->next;
+		ft_fd_printf(1, "GLOBAL = %d\n", global_ret_value);
 	}
 	dup2(save_stdin, STDIN_FILENO);		//restore back stdin and stdout
 	dup2(save_stdout, STDOUT_FILENO);
