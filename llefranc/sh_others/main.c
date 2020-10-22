@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/21 17:24:26 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/22 16:21:19 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ int		find_var_in_env(char *var, char **env);
 // echo salut > test coucouo \\ | head | wc > > test2 < test3 > test6 > test7 > > test8 < test9 salut ok hello > test10 | bonjour ok | < lol > mdr programme
 
 // head test.txt | wc | cat
+// bash-3.2$ cat | ls
+// codebrai        llefranc        todo
+// ctrl baskclsah
 
 void	imite_fonction_corentin(char **cmd)
 {
@@ -72,8 +75,12 @@ int main(int ac, char *av[], char *env[])
 	char *line = NULL;
 	char **cmd;
 	char **env_shell; //copy of env
-	(void)av;
 
+	(void)av;
+	if (signal(SIGINT, &handler_sigint) == SIG_ERR)
+		exit(error_msg("signal: signal handler failed\n", FAILURE));
+	if (signal(SIGQUIT, &handler_sigquit) == SIG_ERR)
+		exit(error_msg("signal: signal handler failed\n", FAILURE));
 	if (!(env_shell = copy_env(env, 0)))
 		return (error_msg("main: malloc failed\n", FAILURE));
 	if (ac != 1)
@@ -96,11 +103,27 @@ int main(int ac, char *av[], char *env[])
 	while (ret_gnl)
 	{
 		ret_gnl = get_next_line(0, &line);
-		if (!line[0])
+		ft_printf("line = %s\n", line);
+		// ft_printf("line = %s\n", line + 2);
+		// ft_printf("line = %s\n", line + 4);
+		ft_printf("ret_gnl = %d\n", ret_gnl);
+		if (!line[0] && ret_gnl) //if no text
 		{
+		// ft_printf("salut = %s\n", line);
+
 			free(line);
+			ft_fd_printf(1, "minishel$ ");
 			continue ;
 		}
+		else if (!line[0] && !ret_gnl) //handling Ctrl-D
+		{
+		// ft_printf("salut2 = %s\n", line);
+
+			free(line);
+			ft_fd_printf(1, "exit\n");
+			exit(SUCCESS);
+		}
+		ft_printf("line = %s\n", line);
 		cmd = ft_split(line, ' ');
 		imite_fonction_corentin(cmd);
 		// int i = -1;
@@ -115,10 +138,11 @@ int main(int ac, char *av[], char *env[])
 		free_token_list(first_token);
 		line = NULL;
 		cmd = NULL;
-		// ft_printf("ret fonction : %d\n", global_ret_value);
+		ft_printf("ret fonction : %d\n", global_ret_value);
 		// system("leaks a.out");
 		ft_printf("minishel$ ");
 	}
+	
 	return (0);
 }
 

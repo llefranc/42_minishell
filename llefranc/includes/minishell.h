@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/21 17:24:12 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/22 14:43:16 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <sys/errno.h>
 # include <sys/stat.h>
 # include <sys/types.h>
+# include <signal.h>
 
 # include "libftprintf.h"
 
@@ -50,6 +51,7 @@ char			*global_path;
 char			*global_home;
 int				global_ret_value;
 t_token			*first_token;
+pid_t			pid;
 
 //--------------------- BUILTINS ---------------------
 int		builtin_echo(char **args);
@@ -73,5 +75,7 @@ int		init_global_path(char **env);
 int		init_global_home(char **env);
 t_token	*create_token_list(char **cmd);
 void	free_token_list(t_token *token);
+void	handler_sigint(int signum);
+void	handler_sigquit(int signum);
 
 #endif

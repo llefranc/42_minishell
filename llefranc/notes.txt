@@ -120,3 +120,7 @@ et un pointeur void que l'on cast ensuite qui contiendra soit la commande et ses
 >>>>>>> pour les buiiltins on ne va pas fork et execve pour les executer, juste appeler la fonction. par contre 
 bien entendu si on mets un pipe il y a un fork et certains builtins pourront ne plus fonctionner s'ils pas dans
 le processus pere lors de leur execution (ex : cd qui doit se trouver a la fin de la ligne pour etre executer)
+
+----------------------------------------- SIGNAUX --------------------------------------------------
+Ctrl-C (in older Unixes, DEL) sends an INT signal ("interrupt", SIGINT); by default, this causes the process to terminate.
+Ctrl-Z sends a TSTP signal ("terminal stop", SIGTSTP); by default, this causes the process to suspend execution.

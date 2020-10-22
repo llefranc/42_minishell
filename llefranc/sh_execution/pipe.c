@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/21 17:20:08 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/21 17:22:10 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/22 13:52:50 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void	move_to_next_pipe(t_token **token, t_token **tmp)
 int		do_pipe(t_token *token, char ***env)
 {
 	t_token		*tmp;
-	pid_t		pid;
 	int			fdpipe[2];
 	int			fd_in; //for saving the input of next command to be executed
 	int			status;

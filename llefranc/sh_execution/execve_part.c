@@ -6,15 +6,15 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:44:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 16:59:52 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/22 16:24:43 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int		find_var_in_env(char *var, char **env);
-char	*copy_home_var(char **env, char *cmd);
-char	*add_absolute_path_to_relative(char *pwd, char *arg);
+int		find_var_in_env(char *var, char **env);                //cd.c
+char	*copy_home_var(char **env, char *cmd);                 //cd.c
+char	*add_absolute_path_to_relative(char *pwd, char *arg);  //cd.c
 
 /*
 ** Returns 1 if there is a '/' in the string, 0 otherwise.
@@ -36,7 +36,6 @@ int		there_is_a_slash(char *arg)
 */
 int		execute_absolute_path(char **args, char **env)
 {
-	pid_t	pid;
 	int		status;
 	int		ret_value;
 	struct stat	info_file;
@@ -57,7 +56,7 @@ int		execute_absolute_path(char **args, char **env)
 		if (execve(args[0], args, env))
 			exit(error_msg("exe: execve failed\n", NOT_FOUND));
 	}
-	else if (pid < 0) //a voir
+	else if (pid < 0) //fork failed
 		return (error_msg("exe: fork failed\n", FAILURE));
 	else //parent process
 	{
@@ -177,6 +176,6 @@ int		execve_part(char **args, char **env)
 			&& args[0][0] != '~' && env[find_var_in_env("PATH", env)]
 			&& (int)ft_strlen(env[find_var_in_env("PATH", env)]) > 5
 			&& !there_is_a_slash(args[0]))
-		return (execute_with_path_variable(args, env));
-	return (execute_path(args, env));
+		return (global_ret_value = execute_with_path_variable(args, env));
+	return (global_ret_value = execute_path(args, env));
 }
