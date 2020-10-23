@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/23 14:06:20 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/23 15:18:09 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ int main(int ac, char *av[], char *env[])
 		free_token_list(first_token);
 		line = NULL;
 		cmd = NULL;
-		ft_printf("ret fonction : %d\n", global_ret_value);
+		// ft_printf("ret fonction : %d\n", global_ret_value);
 		// system("leaks a.out");
 		ft_printf("minishel$ ");
 	}

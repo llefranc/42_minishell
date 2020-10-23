@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/21 17:20:08 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/22 13:52:50 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/23 15:35:13 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@ int		pipe_exec_son(t_token *token, t_token *tmp, char ***env, int fdpipe[2], int
 	dup2(fd_in, STDIN_FILENO); //if there was a pipe before, connecting this command to previous one
 	if (tmp) //if there is an other pipe after this command we redirect its output into the pipe_fd
 		dup2(fdpipe[1], STDOUT_FILENO); //otherwise this command is the last one and will print to stdout
+	close(fdpipe[1]);
 	execution(token, env);
 	close(fd_in);
-	close(fdpipe[1]);
+	// ft_fd_printf(2, "salut\n");
 	free(global_path); //freeing all the variables because this is a forked process (son)
 	free(global_home); //and it will exit
 	free_split(*env);
@@ -59,10 +60,13 @@ int		do_pipe(t_token *token, char ***env)
 	int			fdpipe[2];
 	int			fd_in; //for saving the input of next command to be executed
 	int			status;
+	int			nb_wait;
+	
                           //for the first execution of the pipe, the left part
 	fd_in = STDIN_FILENO; //doesn't take any input
 	status = 0;
 	tmp = token;
+	nb_wait = 0;
 	while (tmp && tmp->type != PIPE)
 		tmp = tmp->next;
 	if (!tmp)            //if *tmp == NULL, there is no pipe to do, normal execution
@@ -79,13 +83,65 @@ int		do_pipe(t_token *token, char ***env)
 				pipe_exec_son(token, tmp, env, fdpipe, fd_in); //exec each parts / redirections between pipes
 			else
 			{
+				nb_wait++;
 				close(fdpipe[1]);
-				waitpid(pid, &status, 0); //waiting for the son to be executed
+				waitpid(pid, &status, WNOHANG); //waiting for the son to be executed
 				fd_in = fdpipe[0]; //saving pipe_input, will be use in the next loop
 			}                      //iteration inside son function
 			move_to_next_pipe(&token, &tmp);
 		}
+		while (nb_wait-- >= 0)
+			wait(NULL);
 		global_ret_value = WEXITSTATUS(status); //exit code of last command executed
 	}
 	return (SUCCESS);
 }
+
+// int		exec_left
+
+// int		exec_right
+
+// int		do_pipe(t_token *token, char ***env)
+// {
+// 	t_token		*tmp;
+// 	int			fdpipe[2];
+// 	int			fd_in; //for saving the input of next command to be executed
+// 	int			status;
+//                           //for the first execution of the pipe, the left part
+// 	fd_in = STDIN_FILENO; //doesn't take any input
+// 	status = 0;
+// 	tmp = token;
+// 	while (tmp && tmp->type != PIPE)
+// 		tmp = tmp->next;
+// 	if (!tmp)            //if *tmp == NULL, there is no pipe to do, normal execution
+// 		execution(token, env);
+// 	else
+// 	{
+// 		while (token)
+// 		{
+// 			pipe(fdpipe);
+// 			pid = fork();
+// 			if (!pid)
+// 				exec_left();
+// 			else
+// 			{
+// 				pid = fork();
+// 				if (!pid)
+// 					exec_right();
+				
+// 				wait(NULL);
+// 				wait(NULL);
+// 			}
+// 			// {
+// 			// 	close(fdpipe[1]);
+// 			// 	waitpid(pid, &status, WNOHANG); //waiting for the son to be executed
+// 			// 	fd_in = fdpipe[0]; //saving pipe_input, will be use in the next loop
+// 			// }                      //iteration inside son function
+
+// 			move_to_next_pipe(&token, &tmp);
+// 		}
+// 		// global_ret_value = WEXITSTATUS(status); //exit code of last command executed
+// 	}
+// 	return (SUCCESS);
+// }
+

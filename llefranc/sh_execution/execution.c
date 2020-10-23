@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:23:44 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/21 17:23:14 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/23 15:38:56 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ int		execution(t_token *token, char ***env)
 			if (!find_builtin(tmp->args, env))
 				execve_part(tmp->args, *env);
 		tmp = tmp->next;
-		ft_fd_printf(1, "GLOBAL = %d\n", global_ret_value);
 	}
 	dup2(save_stdin, STDIN_FILENO);		//restore back stdin and stdout
 	dup2(save_stdout, STDOUT_FILENO);
