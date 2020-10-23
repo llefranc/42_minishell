@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/22 16:21:19 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/23 14:06:20 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ int main(int ac, char *av[], char *env[])
 	(void)av;
 	if (signal(SIGINT, &handler_sigint) == SIG_ERR)
 		exit(error_msg("signal: signal handler failed\n", FAILURE));
-	if (signal(SIGQUIT, &handler_sigquit) == SIG_ERR)
-		exit(error_msg("signal: signal handler failed\n", FAILURE));
+	// if (signal(SIGQUIT, &handler_sigquit) == SIG_ERR)
+	// 	exit(error_msg("signal: signal handler failed\n", FAILURE));
 	if (!(env_shell = copy_env(env, 0)))
 		return (error_msg("main: malloc failed\n", FAILURE));
 	if (ac != 1)
@@ -103,27 +103,18 @@ int main(int ac, char *av[], char *env[])
 	while (ret_gnl)
 	{
 		ret_gnl = get_next_line(0, &line);
-		ft_printf("line = %s\n", line);
-		// ft_printf("line = %s\n", line + 2);
-		// ft_printf("line = %s\n", line + 4);
-		ft_printf("ret_gnl = %d\n", ret_gnl);
 		if (!line[0] && ret_gnl) //if no text
 		{
-		// ft_printf("salut = %s\n", line);
-
 			free(line);
 			ft_fd_printf(1, "minishel$ ");
 			continue ;
 		}
 		else if (!line[0] && !ret_gnl) //handling Ctrl-D
 		{
-		// ft_printf("salut2 = %s\n", line);
-
 			free(line);
 			ft_fd_printf(1, "exit\n");
 			exit(SUCCESS);
 		}
-		ft_printf("line = %s\n", line);
 		cmd = ft_split(line, ' ');
 		imite_fonction_corentin(cmd);
 		// int i = -1;
