@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve_part.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:44:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/22 16:24:43 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/24 15:32:11 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ int		execute_absolute_path(char **args, char **env)
 	else //parent process
 	{
 		waitpid(pid, &status, 0); //wait until process previously created exits
-		ret_value = WEXITSTATUS(status);
+		ret_value = WIFSIGNALED(status)?
+			(__WCOREDUMP(status) ? 131 : 130) : WEXITSTATUS(status); //130 for CTRL+C, 131 for CTRL+backslash
 	}
 	return (ret_value);
 }

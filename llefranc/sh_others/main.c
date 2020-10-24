@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucaslefrancq <lucaslefrancq@student.42    +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:41 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/24 12:24:41 by lucaslefran      ###   ########.fr       */
+/*   Updated: 2020/10/24 15:28:45 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,15 +77,14 @@ int main(int ac, char *av[], char *env[])
 	char **env_shell; //copy of env
 
 	(void)av;
-	if (signal(SIGINT, &handler_sigint) == SIG_ERR)
+	if (signal(SIGINT, &handler_sigint) == SIG_ERR ||
+			signal(SIGQUIT, &handler_sigquit) == SIG_ERR)
 		exit(error_msg("signal: signal handler failed\n", FAILURE));
-	// if (signal(SIGQUIT, &handler_sigquit) == SIG_ERR)
-	// 	exit(error_msg("signal: signal handler failed\n", FAILURE));
 	if (!(env_shell = copy_env(env, 0)))
 		return (error_msg("main: malloc failed\n", FAILURE));
 	if (ac != 1)
 	{
-		ft_printf("just launch minishell exe, without any argument\n");
+		ft_fd_printf(1, "just launch minishell exe, without any argument\n");
 		exit(EXIT_FAILURE);
 	}
 	save_stdin = dup(STDIN_FILENO);
@@ -99,9 +98,10 @@ int main(int ac, char *av[], char *env[])
 	}
 
 	// PARSEUR QUI DOIT RENVOYER UN DOUBLE TABLEAU DE CHAR (**ARGV) TERMINE PAR NULL
-	ft_printf("minishel$ ");
+	ft_fd_printf(1, "minishel$ ");
 	while (ret_gnl)
 	{
+		cmd_is_running = 0;
 		ret_gnl = get_next_line(0, &line);
 		if (!line[0] && ret_gnl) //if no text
 		{
@@ -115,6 +115,7 @@ int main(int ac, char *av[], char *env[])
 			ft_fd_printf(1, "exit\n");
 			exit(SUCCESS);
 		}
+		cmd_is_running = 1;
 		cmd = ft_split(line, ' ');
 		imite_fonction_corentin(cmd);
 		// int i = -1;
@@ -129,11 +130,12 @@ int main(int ac, char *av[], char *env[])
 		free_token_list(first_token);
 		line = NULL;
 		cmd = NULL;
-		// ft_printf("ret fonction : %d\n", global_ret_value);
+		ft_printf("ret fonction : %d\n", global_ret_value);
 		// system("leaks a.out");
 		ft_printf("minishel$ ");
 	}
-	
+	free(global_home);
+	free(global_path);
 	return (0);
 }
 
