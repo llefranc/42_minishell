@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:44:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/24 15:32:11 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/24 16:59:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,28 @@ int		there_is_a_slash(char *arg)
 	if (arg[i] == '/')
 		return (1);
 	return (0);
+}
+
+/*
+** If a new sh is launched, activates a boolean that will prevent the execution
+** of CTRL+C and CTRL+backslash. Reactivates the signals when sh son exits.
+*/
+void	new_sh_launched(char *arg)
+{
+	int			i;
+
+	i = 0;
+	if (new_sh_bool)
+	{
+		new_sh_bool = 0;
+		return ;
+	}
+	while(arg[i])
+		i++;
+	while (i > 0 && arg[i - 1] != '/') //analyzing last part of exe path
+		i--;
+	if (!ft_strcmp(&arg[i], "minishell") || !!ft_strcmp(&arg[i], "bash"))
+		new_sh_bool = 1;
 }
 
 /*
@@ -60,9 +82,11 @@ int		execute_absolute_path(char **args, char **env)
 		return (error_msg("exe: fork failed\n", FAILURE));
 	else //parent process
 	{
+		new_sh_launched(args[0]); //desactivating signals in parent if new sh is launched
 		waitpid(pid, &status, 0); //wait until process previously created exits
 		ret_value = WIFSIGNALED(status)?
 			(__WCOREDUMP(status) ? 131 : 130) : WEXITSTATUS(status); //130 for CTRL+C, 131 for CTRL+backslash
+		new_sh_launched(args[0]); //reactivating signals
 	}
 	return (ret_value);
 }

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:28:57 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/24 15:12:45 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/24 16:44:29 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct			s_token
 int				save_stdin;
 int				save_stdout;
 int				cmd_is_running;
+int				new_sh_bool;
 char			*global_path;
 char			*global_home;
 int				global_ret_value;
