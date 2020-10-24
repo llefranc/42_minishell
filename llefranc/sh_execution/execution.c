@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucaslefrancq <lucaslefrancq@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:23:44 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/23 15:38:56 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/24 12:19:44 by lucaslefran      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,5 +89,5 @@ int		execution(t_token *token, char ***env)
 	}
 	dup2(save_stdin, STDIN_FILENO);		//restore back stdin and stdout
 	dup2(save_stdout, STDOUT_FILENO);
-	return (SUCCESS);
+	return (global_ret_value);
 }
