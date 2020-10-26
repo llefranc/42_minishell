@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve_part.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:44:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/24 16:59:37 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/26 17:07:02 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int		execute_absolute_path(char **args, char **env)
 		new_sh_launched(args[0]); //desactivating signals in parent if new sh is launched
 		waitpid(pid, &status, 0); //wait until process previously created exits
 		ret_value = WIFSIGNALED(status)?
-			(__WCOREDUMP(status) ? 131 : 130) : WEXITSTATUS(status); //130 for CTRL+C, 131 for CTRL+backslash
+			(WCOREDUMP(status) ? 131 : 130) : WEXITSTATUS(status); //130 for CTRL+C, 131 for CTRL+backslash
 		new_sh_launched(args[0]); //reactivating signals
 	}
 	return (ret_value);
