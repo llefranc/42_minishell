@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/20 15:13:01 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 15:13:56 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/26 18:11:04 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ t_token	*create_token(char **cmd, int *i)
 	}
 	else if (cmd[*i][0] == F_PIPE) // | pipe
 		new_token = ft_lstnew(PIPE, NULL);
-	else							// command
+	else                            // command
 		new_token = ft_lstnew(EXEC, cmd[*i]);
 	if (!new_token) // if malloc failed
 		return (NULL);
@@ -197,7 +197,7 @@ t_token	*create_token_list(char **cmd)
 		else
 		{
 			if (cmd[i][0] != F_PIPE && cmd[i][0] != F_LEFT && cmd[i][0] != F_RIGHT)
-				control_malloc = create_token_exec(&token, cmd, &i);	//if it's an argument of a command
+				control_malloc = create_token_exec(&token, cmd, &i);    //if it's an argument of a command
 			else if (cmd[i][0] == F_PIPE)
 				control_malloc = create_token_pipe(&token, cmd, &i);    //if it's a pipe
 			else

@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 17:42:10 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/20 12:58:57 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/26 18:08:23 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ int     reduce_env_array(char ***env, char *old_var)
     tmp_env[i - 1] = NULL;
     i = 0;
     j = 0;
-    while ((*env)[i] && ((ft_strncmp((*env)[i], old_var, (int)ft_strlen(old_var)))	//until we met old_var
-			|| len_var_name(old_var) != len_var_name((*env)[i])))					//in environnement array
+    while ((*env)[i] && ((ft_strncmp((*env)[i], old_var, (int)ft_strlen(old_var)))  //until we met old_var
+			|| len_var_name(old_var) != len_var_name((*env)[i])))                   //in environnement array
     {
         tmp_env[j] = (*env)[i]; //copying adresses of previous array in new one
         i++;
@@ -88,13 +88,13 @@ int     builtin_unset(char **args, char ***env)
 	ret_value = SUCCESS;
     while (args[++i]) //first i is 1, cause args[0] is unset cmd
     {
-		if (check_name_var_unset(args[i]))	//if name of variable isn't correct >> we don't unset
-		{									//and we set return value to error code (1)
+		if (check_name_var_unset(args[i]))  //if name of variable isn't correct >> we don't unset
+		{                                   //and we set return value to error code (1)
 			ret_value = FAILURE;
 			ft_fd_printf(STDERR_FILENO, "minishell: unset: `%s': not a valid identifier\n", args[i]);
 		}
-        else if (!is_it_new_variable(args[i], *env))	//if the variable exist in the environnement
-        {												//and there is no '=' inside
+        else if (!is_it_new_variable(args[i], *env))    //if the variable exist in the environnement
+        {                                               //and there is no '=' inside
             if (reduce_env_array(env, args[i]))
                 return (error_msg("unset: malloc failed\n", FAILURE));
         }

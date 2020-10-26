@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucaslefrancq <lucaslefrancq@student.42    +#+  +:+       +#+        */
+/*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/13 11:23:44 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/24 12:19:44 by lucaslefran      ###   ########.fr       */
+/*   Updated: 2020/10/26 18:09:54 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int		execution(t_token *token, char ***env)
 				execve_part(tmp->args, *env);
 		tmp = tmp->next;
 	}
-	dup2(save_stdin, STDIN_FILENO);		//restore back stdin and stdout
+	dup2(save_stdin, STDIN_FILENO);     //restore back stdin and stdout
 	dup2(save_stdout, STDOUT_FILENO);
 	return (global_ret_value);
 }

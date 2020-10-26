@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/06 12:35:58 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/19 11:43:25 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/26 18:07:23 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ char	**echo_n_opt(char **args, int *n_opt)
 		while ((*args)[i] == 'n')
 			i++;
 		if ((*args)[i] == '\0')	//if '\0', only n in the string
-			*n_opt = 1;			//so we indicate that there is at leat one valid "-n"
+			*n_opt = 1;         //so we indicate that there is at leat one valid "-n"
 		else
-			return (args);		//otherwise it's not "-n" >> it's an arg that echo need to print
+			return (args);      //otherwise it's not "-n" >> it's an arg that echo need to print
 		args++;
 	}
 	return (args);

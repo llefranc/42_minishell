@@ -6,7 +6,7 @@
 /*   By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 15:34:05 by llefranc          #+#    #+#             */
-/*   Updated: 2020/10/21 11:29:24 by llefranc         ###   ########.fr       */
+/*   Updated: 2020/10/26 18:07:10 by llefranc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ char	*copy_home_var(char **env, char *cmd)
 
 	i = 0;
 	i = find_var_in_env("HOME", env);
-	if ((!env[i] || (env[i] && ft_strncmp(env[i], "HOME=", 5)) ||				//HOME variable doesn't exist
-			(env[i] && !ft_strncmp(env[i], "HOME=", 5) && env[i][5] == '\0'))	//or HOME=""
+	if ((!env[i] || (env[i] && ft_strncmp(env[i], "HOME=", 5)) ||               //HOME variable doesn't exist
+			(env[i] && !ft_strncmp(env[i], "HOME=", 5) && env[i][5] == '\0'))   //or HOME=""
 			&& ft_fd_printf(STDERR_FILENO, "minishell: %s: HOME not set\n", cmd))
 		return (NULL);
 	if (!(tmp = ft_strdup(env[i])) && ft_fd_printf(STDERR_FILENO, "minishell: %s: malloc failed\n", cmd))
@@ -186,7 +186,7 @@ char	*remove_double_dots(char *path)
 	i = -1;
 	while (path[++i])
 	{
-		if (path[i] == '.' && path[i + 1] == '.' && path[i - 1] == '/' &&	//remove '/..' and the part until previous '/'
+		if (path[i] == '.' && path[i + 1] == '.' && path[i - 1] == '/' &&    //remove '/..' and the part until previous '/'
 				(path[i + 2] == '\0' || path[i + 2] == '/'))
 		{
 			if (path[i + 2] == '\0' && !(path = add_end_slash(path))) //adds a '/' if /.. is at the end of path
@@ -214,7 +214,7 @@ char	*remove_simple_dot(char *path)
 	i = -1;
 	while (path[++i])
 	{
-		if (path[i] == '.' && path[i - 1] == '/' && (path[i + 1] == '\0' || path[i + 1] == '/'))	//remove '/.'
+		if (path[i] == '.' && path[i - 1] == '/' && (path[i + 1] == '\0' || path[i + 1] == '/'))   //remove '/.'
 		{
 			if (path[i + 1] == '\0' && !(path = add_end_slash(path))) //adds a '/' if /. is at the end of path
 				return (NULL);
@@ -238,7 +238,7 @@ int		remove_multiple_slash(char *path)
 		return (SUCCESS);
 	i = 0;
 	if (path[i] == '/' && path[i + 1] == '/' && path[i + 2] == '/') //if there is at least 3 slashs at beginning of path >> we keep only one
-		i = -1;														//otherwise we do not treat first '/' because it can be double (only the first one !)
+		i = -1;                                                     //otherwise we do not treat first '/' because it can be double (only the first one !)
 	while (path[++i])
 	{
 		if (path[i] == '/' && path[i + 1] == '/')
@@ -320,8 +320,8 @@ int		update_env_pwd_oldpwd(char *path, char **env)
 	i = 0;
 	while (path[i])
 		i++;
-	if (i > 2 && path[i - 1] == '/')	//removing the shlash at the end if it exist
-		path[i - 1] = '\0';				//except when path is '/' or '//
+	if (i > 2 && path[i - 1] == '/')    //removing the shlash at the end if it exist
+		path[i - 1] = '\0';             //except when path is '/' or '//
 	i = find_var_in_env("PWD", env);
 	if (env[i] && update_env("PWD=", path, env , i)) //if $HOME var exists we update it
 		return (FAILURE);
@@ -336,7 +336,7 @@ int		update_env_pwd_oldpwd(char *path, char **env)
 */
 int		builtin_cd(char **args, char **env)
 {
-	char	*path;		//path will be send to chdir func
+	char	*path;      //path will be send to chdir func
 	struct stat	info_file;
 	
 	if (args && args[1] && args[1][0] == '-') //our cd doesn't handle options
