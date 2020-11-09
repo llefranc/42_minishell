@@ -3,21 +3,21 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+         #
+#    By: corentindebraix <corentindebraix@studen    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 16:07:08 by llefranc          #+#    #+#              #
-#    Updated: 2020/10/26 17:15:56 by llefranc         ###   ########.fr        #
+#    Updated: 2020/11/08 23:11:56 by corentindeb      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		=	minishell
 CC			=	gcc
-FLAGS		=	-O3 -Wall -Wextra -Werror
+FLAGS		=	-Wall -Wextra -Werror -g -fsanitize=address
 
-SRCS_BUI	=	cd.c echo.c env.c exit.c export.c pwd.c unset.c
-SRCS_EXE	=	execution.c execve_part.c pipe.c
-SRCS_OTH	=	main.c signal.c tokens_chainlist.c utils.c
-SRCS_LIB	=	ft_fd_printf.c ft_printf.c ft_printf_fill_param.c ft_printf_fill_param2.c \
+SRCS_LL_BUI	=	cd.c echo.c env.c exit.c export.c pwd.c unset.c
+SRCS_LL_EXE	=	execution.c execve_part.c pipe.c
+SRCS_LL_OTH	=	main.c signal.c tokens_chainlist.c utils.c
+SRCS_LL_LIB	=	ft_fd_printf.c ft_printf.c ft_printf_fill_param.c ft_printf_fill_param2.c \
 				ft_printf_fill_param3.c ft_printf_check_param.c \
 				ft_printf_check_param2.c ft_printf_conv.c ft_printf_conv_cdi.c \
 				ft_printf_conv_unp.c ft_printf_conv_x.c ft_printf_conv_s.c \
@@ -39,43 +39,79 @@ SRCS_LIB	=	ft_fd_printf.c ft_printf.c ft_printf_fill_param.c ft_printf_fill_para
 				ft_convert_base.c ft_convert_base2.c ft_replace_char.c \
 				get_next_line.c get_next_line_utils.c
 
-OBJS_BUI	=	$(SRCS_BUI:.c=.o)
-OBJS_EXE	=	$(SRCS_EXE:.c=.o)
-OBJS_OTH	=	$(SRCS_OTH:.c=.o)
-OBJS_LIB	=	$(SRCS_LIB:.c=.o)
+SRCS_CD_LEX	=	ft_lexer.c ft_lexer2.c ft_lexer3.c ft_lexer4.c
+SRCS_CD_LIB	=	ft_cditoa.c ft_cdputstr.c ft_cdstrcat.c ft_cdstrcmp.c ft_cdstrdup.c ft_cdstrlcpy.c ft_cdstrncmp.c \
+				ft_cdsplit.c ft_cdstrchr.c ft_cdstrcpy.c ft_cdstrjoin.c ft_cdstrlen.c ft_cdstrncpy.c
+SRCS_CD_PAR	=	ft_parser.c ft_replace_path.c ft_target_bslash.c ft_transfo_dollars.c ft_trim_quotes.c \
+				ft_handle_spaces_in_env.c ft_trim_command.c ft_take_env_path.c
+SRCS_CD_UTI	=	ft_copy_env.c ft_free_doublearray.c ft_sepcomp.c ft_strcat_char.c \
+				ft_count_backslash.c ft_putsyntax_fd.c ft_split_and_free.c ft_strjoinfree.c
 
-PATH_BUI	=	llefranc/sh_builtins/
-PATH_EXE	=	llefranc/sh_execution/
-PATH_OTH	=	llefranc/sh_others/
-PATH_LIB	=	llefranc/libft/
+
+OBJS_LL_BUI	=	$(SRCS_LL_BUI:.c=.o)
+OBJS_LL_EXE	=	$(SRCS_LL_EXE:.c=.o)
+OBJS_LL_OTH	=	$(SRCS_LL_OTH:.c=.o)
+OBJS_LL_LIB	=	$(SRCS_LL_LIB:.c=.o)
+
+OBJS_CD_LEX	=	$(SRCS_CD_LEX:.c=.o)
+OBJS_CD_LIB	=	$(SRCS_CD_LIB:.c=.o)
+OBJS_CD_PAR	=	$(SRCS_CD_PAR:.c=.o)
+OBJS_CD_UTI	=	$(SRCS_CD_UTI:.c=.o)
+
+PATH_LL_BUI	=	lucas_lefrancq/sh_builtins/
+PATH_LL_EXE	=	lucas_lefrancq/sh_execution/
+PATH_LL_OTH	=	lucas_lefrancq/sh_others/
+PATH_LL_LIB	=	lucas_lefrancq/libft/
+
+PATH_CD_LEX	=	corentin_debraix/lexer/
+PATH_CD_LIB	=	corentin_debraix/libft/
+PATH_CD_PAR	=	corentin_debraix/parser/
+PATH_CD_UTI	=	corentin_debraix/parsing_utils/
 
 all		: 	$(NAME)
 
-$(NAME)	:	$(addprefix $(PATH_LIB), $(OBJS_LIB)) $(addprefix $(PATH_OTH), $(OBJS_OTH)) \
-			$(addprefix $(PATH_BUI), $(OBJS_BUI)) $(addprefix $(PATH_EXE), $(OBJS_EXE))
-			$(CC) -o $(NAME) $(FLAGS) -I includes/\
-			$(addprefix $(PATH_LIB), $(OBJS_LIB)) $(addprefix $(PATH_OTH), $(OBJS_OTH)) \
-			$(addprefix $(PATH_BUI), $(OBJS_BUI)) $(addprefix $(PATH_EXE), $(OBJS_EXE))
+$(NAME)	:	$(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
+			$(addprefix $(PATH_LL_BUI), $(OBJS_LL_BUI)) $(addprefix $(PATH_LL_EXE), $(OBJS_LL_EXE)) \
+			$(addprefix $(PATH_CD_LEX), $(OBJS_CD_LEX)) $(addprefix $(PATH_CD_LIB), $(OBJS_CD_LIB)) \
+			$(addprefix $(PATH_CD_PAR), $(OBJS_CD_PAR)) $(addprefix $(PATH_CD_UTI), $(OBJS_CD_UTI))
+			$(CC) -o $(NAME) $(FLAGS) \
+			$(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
+			$(addprefix $(PATH_LL_BUI), $(OBJS_LL_BUI)) $(addprefix $(PATH_LL_EXE), $(OBJS_LL_EXE)) \
+			$(addprefix $(PATH_CD_LEX), $(OBJS_CD_LEX)) $(addprefix $(PATH_CD_LIB), $(OBJS_CD_LIB)) \
+			$(addprefix $(PATH_CD_PAR), $(OBJS_CD_PAR)) $(addprefix $(PATH_CD_UTI), $(OBJS_CD_UTI))
 
 clean	:	
-				rm -rf $(addprefix $(PATH_LIB), $(OBJS_LIB)) $(addprefix $(PATH_OTH), $(OBJS_OTH)) \
-				$(addprefix $(PATH_BUI), $(OBJS_BUI)) $(addprefix $(PATH_EXE), $(OBJS_EXE))
+				rm -rf $(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
+				$(addprefix $(PATH_LL_BUI), $(OBJS_LL_BUI)) $(addprefix $(PATH_LL_EXE), $(OBJS_LL_EXE)) \
+				$(addprefix $(PATH_CD_LEX), $(OBJS_CD_LEX)) $(addprefix $(PATH_CD_LIB), $(OBJS_CD_LIB)) \
+				$(addprefix $(PATH_CD_PAR), $(OBJS_CD_PAR)) $(addprefix $(PATH_CD_UTI), $(OBJS_CD_UTI))
 
 fclean	:	clean
 				rm -rf $(NAME)
 
-$(PATH_LIB)%.o		:	$(PATH_LIB)%.c
+$(PATH_LL_LIB)%.o		:	$(PATH_LL_LIB)%.c
 			$(CC) $(FLAGS) -o $@ -c $<
 
-$(PATH_OTH)%.o		:	$(PATH_OTH)%.c
+$(PATH_LL_OTH)%.o		:	$(PATH_LL_OTH)%.c
 			$(CC) $(FLAGS) -o $@ -c $<
 
-$(PATH_BUI)%.o		:	$(PATH_BUI)%.c
+$(PATH_LL_BUI)%.o		:	$(PATH_LL_BUI)%.c
 			$(CC) $(FLAGS) -o $@ -c $<
 
-$(PATH_EXE)%.o		:	$(PATH_EXE)%.c
+$(PATH_LL_EXE)%.o		:	$(PATH_LL_EXE)%.c
 			$(CC) $(FLAGS) -o $@ -c $<
 			
+$(PATH_CD_LEX)%.o		:	$(PATH_CD_LEX)%.c
+			$(CC) $(FLAGS) -o $@ -c $<
+
+$(PATH_CD_LIB)%.o		:	$(PATH_CD_LIB)%.c
+			$(CC) $(FLAGS) -o $@ -c $<
+
+$(PATH_CD_PAR)%.o		:	$(PATH_CD_PAR)%.c
+			$(CC) $(FLAGS) -o $@ -c $<
+
+$(PATH_CD_UTI)%.o		:	$(PATH_CD_UTI)%.c
+			$(CC) $(FLAGS) -o $@ -c $<
 
 re		:	fclean all
 
