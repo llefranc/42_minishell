@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cdminishell.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lucaslefrancq <lucaslefrancq@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/08 23:53:03 by user42            #+#    #+#             */
-/*   Updated: 2020/11/08 23:53:09 by user42           ###   ########.fr       */
+/*   Updated: 2020/11/13 15:23:43 by lucaslefran      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void			ft_putsyntax_fd(char *str, t_sh *sh, int fd);
 void			ft_print_doubletabchar(char **tab);
 char			*ft_strjoinfree(char *s1, char *s2);
 int				create_new_env(t_sh *sh);
+void			ft_init_sh(t_sh *sh);
 
 /*
 ** LEXER

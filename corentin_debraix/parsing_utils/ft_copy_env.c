@@ -6,19 +6,11 @@
 /*   By: lucaslefrancq <lucaslefrancq@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/27 13:48:53 by corentin          #+#    #+#             */
-/*   Updated: 2020/11/03 17:54:53 by lucaslefran      ###   ########.fr       */
+/*   Updated: 2020/11/13 15:24:08 by lucaslefran      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cdminishell.h"
-
-//pour shlvl >> on recup valeur d'env et on rajoute +1
-//si shlvl negatif et on ouvre new bash >> shlvl=0
-//si shlvl est du texte et on ouvre un new bash >>shlvl=1
-//si --4 >> shlvl=1
-//si shlvl="" >> shlvl=1
-//si shlvl unset >> shlvl=1
-//si shlvl=999 >> shlvl=1 + msg : bash avertissement niveau de shell trop eleve
 
 int		find_var_in_env(char *var, char **env);
 
@@ -120,4 +112,16 @@ void	ft_copy_env(char **env, t_sh *sh)
 		sh->copyenv[i] = ft_cdstrdup(env[i]);
 	sh->copyenv[i] = NULL;
 	init_shlvl_value(sh, sh->copyenv);
+}
+
+void	ft_init_sh(t_sh *sh)
+{
+	sh->onemoredollar = 0;
+	sh->envlen = 0;
+	sh->cmpvar = 0;
+	sh->syntaxerror = 0;
+	sh->sqflag = 0;
+	sh->dqflag = 0;
+	sh->command = NULL;
+	sh->copyenv = NULL;
 }

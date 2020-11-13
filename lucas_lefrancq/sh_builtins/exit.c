@@ -49,6 +49,10 @@ void	ft_swap(char **a, char **b)
 	*b = tmp;
 }
 
+/*
+** Puts all the empty args at the end of char **args. Exit builtin will treat
+** all normal args and stop when it will meet an empty argument.
+*/
 void	sort_args_exit(char **args)
 {
 	int		i;
@@ -62,7 +66,7 @@ void	sort_args_exit(char **args)
 			j = i + 1;
 			while (args[j] && args[j][0] == '\0')
 				j++;
-			if (!args[j])
+			if (!args[j]) //args[i] and all the following arguments are empty
 				i = j;
 			else
 			{
