@@ -54,7 +54,7 @@ int main(int ac, char *av[], char *env[])
 		return (error_msg("main: malloc failed\n", FAILURE));
 	}
 
-	ft_fd_printf(0, "minishel$ ");
+	ft_fd_printf(0, "\033[1;32mminishell$\033[0m ");
 	while (ret_gnl)
 	{
 		sh.sqflag = 0;
@@ -66,7 +66,7 @@ int main(int ac, char *av[], char *env[])
 		if (!line[0] && ret_gnl) //if no text
 		{
 			free(line);
-			ft_fd_printf(0, "minishel$ ");
+			ft_fd_printf(0, "\033[1;32mminishell$\033[0m ");
 			continue ;
 		}
 		else if (!line[0] && !ret_gnl) //handling Ctrl-D
@@ -89,7 +89,7 @@ int main(int ac, char *av[], char *env[])
 		if (sh.syntaxerror == 0)
 			ft_free_doublearray(semicolon);
 		line = NULL;
-		ft_fd_printf(0, "minishel$ ");
+		ft_fd_printf(0, "\033[1;32mminishell$\033[0m ");
 	}
 	return (global_ret_value);
 }

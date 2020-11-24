@@ -1,12 +1,12 @@
-# Minishell (@42Paris - made with [Corentin Debraix][1])
+# Minishell (@42Paris)
 
 As beautiful as a shell
 
-![Alt text](https://github.com/lucaslefrancq/42-07_philosophers/blob/main/minishell_example.png)
+![Alt text](https://github.com/lucaslefrancq/42-06_minishell/blob/master/minishell_example.png)
 
 ## About
 
-Minishell is the 6th project of the mandatory part of the cursus.
+Minishell is the 6th project of the mandatory part of the cursus that I made with my friend [Corentin Debraix][1].
 It's only made in C and the main goal was to create a shell working like bash.
 In this case we had to understand how processes, redirections, pipes, execve and bash builtins work.
 We also had to learn how bash was handling a command line (lexer / parser / exec).
