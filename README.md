@@ -15,7 +15,7 @@ We also had to learn how bash was handling a command line (lexer / parser / exec
 
 `This project was code for MACOS`
 
-### Building and running the program
+### Building and running the project
 
 1. Download/Clone this repo
 
