@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: corentindebraix <corentindebraix@studen    +#+  +:+       +#+         #
+#    By: lucaslefrancq <lucaslefrancq@student.42    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 16:07:08 by llefranc          #+#    #+#              #
-#    Updated: 2020/11/08 23:11:56 by corentindeb      ###   ########.fr        #
+#    Updated: 2020/11/24 16:35:22 by lucaslefran      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		=	minishell
 CC			=	gcc
-FLAGS		=	-Wall -Wextra -Werror -g -fsanitize=address
+FLAGS		=	-Wall -Wextra -Werror
 
 SRCS_LL_BUI	=	cd.c echo.c env.c exit.c export.c pwd.c unset.c
 SRCS_LL_EXE	=	execution.c execve_part.c pipe.c
