@@ -1,8 +1,8 @@
-# Minishell (@42Paris)
+# minishell (@42Paris)
 
-As beautiful as a shell
+"As beautiful as a shell"
 
-![Alt text](https://github.com/lucaslefrancq/42-06_minishell/blob/master/minishell_example.png)
+![Alt text](https://github.com/lucaslefrancq/42_minishell/blob/master/minishell_example.png)
 
 ## About
 
@@ -19,10 +19,11 @@ We also had to learn how bash was handling a command line (lexer / parser / exec
 
 1. Download/Clone this repo
 
-        git clone https://github.com/lucaslefrancq/42-06_minishell
+        git clone https://github.com/lucaslefrancq/42_minishell.git
+
 2. `cd` into the root directory, and run `make`
 
-        cd 42-06_minishell
+        cd 42_minishell
         make
 
 3.  run `./minishell` without any argument.
@@ -38,7 +39,7 @@ We also had to learn how bash was handling a command line (lexer / parser / exec
 
 
 [1]: https://github.com/codebrai
-[2]: https://github.com/lucaslefrancq/42-06_minishell/blob/main/minishell.en.subject.pdf
+[2]: https://github.com/lucaslefrancq/42_minishell/blob/master/minishell.en.subject.pdf
 [8]: https://superuser.com/questions/178796/understanding-how-inputs-are-sent-to-pipes-in-bash/178798#178798
 [3]: https://www.cs.rutgers.edu/~pxk/416/notes/c-tutorials/dup2.html
 [4]: http://supertos.free.fr/supertos.php?page=950
