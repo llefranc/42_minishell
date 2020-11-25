@@ -6,7 +6,7 @@
 
 ## About
 
-Minishell is the 6th project of the mandatory part of the cursus that I made with my friend [Corentin Debraix][1].
+Minishell is a project of the mandatory part of the cursus that I made with my friend [Corentin Debraix][1].
 It's only made in C and the main goal was to create a shell working like bash.
 In this case we had to understand how processes, redirections, pipes, execve and bash builtins work.
 We also had to learn how bash was handling a command line (lexer / parser / exec).
