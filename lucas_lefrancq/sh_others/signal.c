@@ -23,7 +23,7 @@ void	handler_sigint(int signum)
 	ft_putstr_fd("\n", 1);
 	if (!cmd_is_running)
 	{
-		ft_putstr_fd("minishel$ ", 1);
+		ft_putstr_fd("\033[1;32mminishell$\033[0m ", 1);
 		global_ret_value = 130;
 	}
 }

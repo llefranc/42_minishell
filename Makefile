@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lucaslefrancq <lucaslefrancq@student.42    +#+  +:+       +#+         #
+#    By: llefranc <llefranc@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/26 16:07:08 by llefranc          #+#    #+#              #
-#    Updated: 2020/11/24 16:35:22 by lucaslefran      ###   ########.fr        #
+#    Updated: 2021/01/14 16:02:44 by llefranc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -68,50 +68,63 @@ PATH_CD_LIB	=	corentin_debraix/libft/
 PATH_CD_PAR	=	corentin_debraix/parser/
 PATH_CD_UTI	=	corentin_debraix/parsing_utils/
 
-all		: 	$(NAME)
-
-$(NAME)	:	$(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
-			$(addprefix $(PATH_LL_BUI), $(OBJS_LL_BUI)) $(addprefix $(PATH_LL_EXE), $(OBJS_LL_EXE)) \
-			$(addprefix $(PATH_CD_LEX), $(OBJS_CD_LEX)) $(addprefix $(PATH_CD_LIB), $(OBJS_CD_LIB)) \
-			$(addprefix $(PATH_CD_PAR), $(OBJS_CD_PAR)) $(addprefix $(PATH_CD_UTI), $(OBJS_CD_UTI))
-			$(CC) -o $(NAME) $(FLAGS) \
-			$(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
-			$(addprefix $(PATH_LL_BUI), $(OBJS_LL_BUI)) $(addprefix $(PATH_LL_EXE), $(OBJS_LL_EXE)) \
-			$(addprefix $(PATH_CD_LEX), $(OBJS_CD_LEX)) $(addprefix $(PATH_CD_LIB), $(OBJS_CD_LIB)) \
-			$(addprefix $(PATH_CD_PAR), $(OBJS_CD_PAR)) $(addprefix $(PATH_CD_UTI), $(OBJS_CD_UTI))
-
-clean	:	
-				rm -rf $(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
+OBJS		=	$(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
 				$(addprefix $(PATH_LL_BUI), $(OBJS_LL_BUI)) $(addprefix $(PATH_LL_EXE), $(OBJS_LL_EXE)) \
 				$(addprefix $(PATH_CD_LEX), $(OBJS_CD_LEX)) $(addprefix $(PATH_CD_LIB), $(OBJS_CD_LIB)) \
 				$(addprefix $(PATH_CD_PAR), $(OBJS_CD_PAR)) $(addprefix $(PATH_CD_UTI), $(OBJS_CD_UTI))
 
+all		: 	$(NAME)
+
+$(NAME)	:	$(OBJS)
+			@$(CC) -o $(NAME) $(FLAGS) \
+			$(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
+			$(addprefix $(PATH_LL_BUI), $(OBJS_LL_BUI)) $(addprefix $(PATH_LL_EXE), $(OBJS_LL_EXE)) \
+			$(addprefix $(PATH_CD_LEX), $(OBJS_CD_LEX)) $(addprefix $(PATH_CD_LIB), $(OBJS_CD_LIB)) \
+			$(addprefix $(PATH_CD_PAR), $(OBJS_CD_PAR)) $(addprefix $(PATH_CD_UTI), $(OBJS_CD_UTI))
+			@echo "\n\n\033[32;1m----- Minishell succesfully built -----\033[0;0m\n"
+
+clean	:	
+				@rm -rf $(addprefix $(PATH_LL_LIB), $(OBJS_LL_LIB)) $(addprefix $(PATH_LL_OTH), $(OBJS_LL_OTH)) \
+				$(addprefix $(PATH_LL_BUI), $(OBJS_LL_BUI)) $(addprefix $(PATH_LL_EXE), $(OBJS_LL_EXE)) \
+				$(addprefix $(PATH_CD_LEX), $(OBJS_CD_LEX)) $(addprefix $(PATH_CD_LIB), $(OBJS_CD_LIB)) \
+				$(addprefix $(PATH_CD_PAR), $(OBJS_CD_PAR)) $(addprefix $(PATH_CD_UTI), $(OBJS_CD_UTI))
+				@printf "\033[31;1mObjects removed\n\033[0;0m"
+
 fclean	:	clean
-				rm -rf $(NAME)
+				@rm -rf $(NAME)
+				@printf "\033[31;1mExecutable removed\n\033[0;0m"
 
 $(PATH_LL_LIB)%.o		:	$(PATH_LL_LIB)%.c
-			$(CC) $(FLAGS) -o $@ -c $<
+			@$(CC) $(FLAGS) -o $@ -c $<
+			@printf "\033[32;1mCompilation of $(NAME):\033[0;0m $(notdir $<)                             \r"
 
 $(PATH_LL_OTH)%.o		:	$(PATH_LL_OTH)%.c
-			$(CC) $(FLAGS) -o $@ -c $<
+			@$(CC) $(FLAGS) -o $@ -c $<
+			@printf "\033[32;1mCompilation of $(NAME):\033[0;0m $(notdir $<)                             \r"
 
 $(PATH_LL_BUI)%.o		:	$(PATH_LL_BUI)%.c
-			$(CC) $(FLAGS) -o $@ -c $<
+			@$(CC) $(FLAGS) -o $@ -c $<
+			@printf "\033[32;1mCompilation of $(NAME):\033[0;0m $(notdir $<)                             \r"
 
 $(PATH_LL_EXE)%.o		:	$(PATH_LL_EXE)%.c
-			$(CC) $(FLAGS) -o $@ -c $<
+			@$(CC) $(FLAGS) -o $@ -c $<
+			@printf "\033[32;1mCompilation of $(NAME):\033[0;0m $(notdir $<)                             \r"
 			
 $(PATH_CD_LEX)%.o		:	$(PATH_CD_LEX)%.c
-			$(CC) $(FLAGS) -o $@ -c $<
+			@$(CC) $(FLAGS) -o $@ -c $<
+			@printf "\033[32;1mCompilation of $(NAME):\033[0;0m $(notdir $<)                             \r"
 
 $(PATH_CD_LIB)%.o		:	$(PATH_CD_LIB)%.c
-			$(CC) $(FLAGS) -o $@ -c $<
+			@$(CC) $(FLAGS) -o $@ -c $<
+			@printf "\033[32;1mCompilation of $(NAME):\033[0;0m $(notdir $<)                             \r"
 
 $(PATH_CD_PAR)%.o		:	$(PATH_CD_PAR)%.c
-			$(CC) $(FLAGS) -o $@ -c $<
+			@$(CC) $(FLAGS) -o $@ -c $<
+			@printf "\033[32;1mCompilation of $(NAME):\033[0;0m $(notdir $<)                             \r"
 
 $(PATH_CD_UTI)%.o		:	$(PATH_CD_UTI)%.c
-			$(CC) $(FLAGS) -o $@ -c $<
+			@$(CC) $(FLAGS) -o $@ -c $<
+			@printf "\033[32;1mCompilation of $(NAME):\033[0;0m $(notdir $<)                             \r"
 
 re		:	fclean all
 
