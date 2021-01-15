@@ -64,13 +64,13 @@ int		do_pipe(t_token *token, char ***env)
 	status = 0;
 	tmp = token;
 	nb_wait = 0;
-	fd_in = dup(STDIN_FILENO);
 	while (tmp && tmp->type != PIPE)
 		tmp = tmp->next;
 	if (!tmp)            //if *tmp == NULL, there is no pipe to do, normal execution
 		execution(token, env);
 	else
 	{
+		fd_in = dup(STDIN_FILENO);
 		while (token)
 		{
 			if (pipe(fdpipe) == -1)
